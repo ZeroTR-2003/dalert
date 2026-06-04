@@ -1,56 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
-import { motion } from 'motion/react';
-
-const typingMessages = ['Still here?', 'I am.', 'Speak soon.'];
-
-function TypingMessages() {
-  const [messageIndex, setMessageIndex] = useState(0);
-  const [visibleText, setVisibleText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    const currentMessage = typingMessages[messageIndex];
-    const isComplete = visibleText === currentMessage;
-    const isEmpty = visibleText.length === 0;
-
-    const delay = isComplete && !isDeleting ? 2000 : isDeleting ? 50 : 100;
-
-    const timeout = window.setTimeout(() => {
-      if (!isDeleting && isComplete) {
-        setIsDeleting(true);
-        return;
-      }
-
-      if (isDeleting && isEmpty) {
-        setIsDeleting(false);
-        setMessageIndex((index) => (index + 1) % typingMessages.length);
-        return;
-      }
-
-      setVisibleText((text) =>
-        isDeleting
-          ? currentMessage.slice(0, Math.max(text.length - 1, 0))
-          : currentMessage.slice(0, text.length + 1),
-      );
-    }, delay);
-
-    return () => window.clearTimeout(timeout);
-  }, [isDeleting, messageIndex, visibleText]);
-
-  return (
-    <div className="pointer-events-none absolute bottom-[30%] left-[74%] z-30 hidden w-[118px] -translate-x-1/2 justify-start text-left md:left-[73%] md:bottom-[31%] lg:left-[72.5%] lg:bottom-[32%]">
-      <span className="font-nokia min-h-[1.5em] break-words text-[10px] leading-tight text-[#2A3616] sm:text-[13px]">
-        {visibleText}
-      </span>
-      <motion.span
-        aria-hidden="true"
-        className="ml-1 inline-block h-3 w-1.5 bg-[#2A3616] align-middle"
-        animate={{ opacity: [0, 1, 0] }}
-        transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-      />
-    </div>
-  );
-}
+import { FormEvent, useState } from 'react';
 
 function Navbar() {
   return (
@@ -141,7 +89,8 @@ function Hero() {
         loop
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
+        poster="/media/dalert-hero-poster.jpg"
         aria-hidden="true"
       >
         <source src="/media/dalert-hero.mp4" type="video/mp4" />
@@ -152,41 +101,23 @@ function Hero() {
 
       <div className="relative z-20 mx-auto flex w-full max-w-5xl items-center">
         <div className="max-w-xl pb-16 pt-14 md:pb-20">
-          <motion.p
-            className="mb-5 font-sans text-[13px] font-medium uppercase tracking-[0.16em] text-[#087A3F]"
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          >
+          <p className="hero-reveal mb-5 font-sans text-[13px] font-medium uppercase tracking-[0.16em] text-[#087A3F]">
             Early access for dalert.app
-          </motion.p>
+          </p>
 
-          <motion.h1
-            className="font-instrument mb-6 max-w-[8ch] text-[50px] leading-[0.9] tracking-tight text-[#111711] sm:max-w-[11ch] sm:text-[72px] md:text-[88px]"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-          >
+          <h1 className="hero-reveal hero-reveal-delay-1 font-instrument mb-6 max-w-[8ch] text-[50px] leading-[0.9] tracking-tight text-[#111711] sm:max-w-[11ch] sm:text-[72px] md:text-[88px]">
             Alerts that feel calm.
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            className="max-w-lg font-sans text-[16px] font-normal leading-relaxed text-[#111711]/72 md:text-[18px]"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          >
+          <p className="hero-reveal hero-reveal-delay-2 max-w-lg font-sans text-[16px] font-normal leading-relaxed text-[#111711]/72 md:text-[18px]">
             Dalert is a simple way to send quiet alerts, check-ins, and short messages without
             adding more noise.
-          </motion.p>
+          </p>
 
-          <motion.form
+          <form
             id="access"
             onSubmit={handleSubmit}
-            className="mt-9 flex w-full max-w-lg flex-col gap-3 rounded-[28px] border border-black/10 bg-[#fffdf5]/72 p-2 shadow-[0_20px_70px_rgba(17,23,17,0.12)] backdrop-blur-xl sm:flex-row"
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="hero-reveal hero-reveal-delay-3 mt-9 flex w-full max-w-lg flex-col gap-3 rounded-[28px] border border-black/10 bg-[#fffdf5]/72 p-2 shadow-[0_20px_70px_rgba(17,23,17,0.12)] backdrop-blur-xl sm:flex-row"
           >
             <label className="sr-only" htmlFor="waitlist-email">
               Email address
@@ -217,7 +148,7 @@ function Hero() {
             >
               {status === 'loading' ? 'Requesting...' : 'Request access'}
             </button>
-          </motion.form>
+          </form>
 
           <p
             className={`mt-4 min-h-6 font-sans text-[14px] ${
