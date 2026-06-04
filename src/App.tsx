@@ -57,12 +57,11 @@ function Navbar() {
     <div className="pointer-events-none fixed left-1/2 top-6 z-50 w-[95%] max-w-5xl -translate-x-1/2">
       <nav className="pointer-events-auto flex items-center justify-between rounded-full border border-black/10 bg-[#f8f8f1]/60 px-4 py-3 shadow-[0_18px_60px_rgba(17,23,17,0.08)] backdrop-blur-xl md:px-5">
         <a href="#" className="flex items-center gap-3" aria-label="Dalert home">
-          <span className="flex h-9 w-[112px] items-center overflow-hidden rounded-full bg-white/65 ring-1 ring-black/5">
-            <img
-              src="/brand/dalert-logo.png"
-              alt="Dalert"
-              className="h-full w-full object-cover object-center"
-            />
+          <span className="flex h-9 items-center gap-2.5 rounded-full bg-white/65 py-1.5 pl-1.5 pr-4 ring-1 ring-black/5">
+            <img src="/brand/dalert-mark.svg" alt="" className="h-6 w-6 rounded-full" />
+            <span className="font-sans text-[16px] font-semibold tracking-[-0.02em] text-[#111711]">
+              dalert
+            </span>
           </span>
         </a>
 
