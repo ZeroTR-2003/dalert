@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dalert — Attendance you can trust. Hours you can pay.</title>
+<title>Dalert</title>
 <meta name="description" content="Dalert turns daily clock-ins into verified, payroll-ready hours for shift-based teams — security, cleaning, retail, construction, logistics, clinics and field crews." />
+<meta name="theme-color" content="#2a2420" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="manifest" href="/site.webmanifest" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <!-- Newsreader stands in for the proprietary bureauSerif: light-weight serif display with tight tracking -->
@@ -54,7 +57,8 @@
   header.nav.scrolled{border-bottom:1px solid var(--stone)}
   .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
   .logo{display:flex;align-items:center;gap:10px}
-  .logo .mark{width:30px;height:30px;border-radius:var(--r-sm);background:var(--black);color:var(--white);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:300;font-size:18px}
+  .logo .mark{width:30px;height:30px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 1px 0 rgba(255,255,255,.35) inset,0 8px 18px rgba(42,36,32,.12)}
+  .logo .mark img{display:block;width:100%;height:100%}
   .logo .name{font-family:var(--serif);font-weight:300;font-size:22px;letter-spacing:-0.5px}
   .nav-links{display:flex;align-items:center;gap:var(--s10)}
   .nav-links a{font-size:14px;letter-spacing:-0.18px;color:var(--brown)}
@@ -207,7 +211,7 @@
 
 <header class="nav" id="nav">
   <div class="wrap nav-inner">
-    <a href="#top" class="logo"><span class="mark">D</span><span class="name">Dalert</span></a>
+    <a href="#top" class="logo"><span class="mark"><img src="/brand/dalert-mark.svg" alt="" width="30" height="30" /></span><span class="name">Dalert</span></a>
     <nav class="nav-links">
       <a href="#features">Features</a>
       <a href="#how">How it works</a>
@@ -451,7 +455,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a href="#top" class="logo"><span class="mark">D</span><span class="name">Dalert</span></a>
+        <a href="#top" class="logo"><span class="mark"><img src="/brand/dalert-mark.svg" alt="" width="30" height="30" /></span><span class="name">Dalert</span></a>
         <p class="desc">Proof-first attendance and payroll-ready timesheets for shift-based teams.</p>
         <p class="meta">dalert.app · Namibia · Prices in N$</p>
       </div>

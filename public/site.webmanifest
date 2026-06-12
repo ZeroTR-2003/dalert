@@ -1,11 +1,11 @@
 {
   "name": "Dalert",
   "short_name": "Dalert",
-  "description": "Calm alerts, private messages, and simple communication.",
+  "description": "Proof-first attendance and payroll-ready timesheets for shift-based teams.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F3F4ED",
-  "theme_color": "#087A3F",
+  "background_color": "#F2F1ED",
+  "theme_color": "#2A2420",
   "icons": [
     {
       "src": "/favicon.svg",
