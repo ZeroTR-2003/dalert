@@ -1,34 +1,522 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Dalert is a simple way to send quiet alerts, check-ins, and short messages without adding more noise."
-    />
-    <meta name="theme-color" content="#087A3F" />
-    <meta property="og:title" content="Dalert | Home" />
-    <meta
-      property="og:description"
-      content="Quiet alerts, check-ins, and short messages without adding more noise."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://dalert.app/" />
-    <title>Dalert | Home</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <link rel="preload" as="image" href="/media/dalert-hero-poster.jpg" fetchpriority="high" />
-    <link rel="preload" as="image" href="/brand/dalert-mark.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@100..900&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dalert — Attendance you can trust. Hours you can pay.</title>
+<meta name="description" content="Dalert turns daily clock-ins into verified, payroll-ready hours for shift-based teams — security, cleaning, retail, construction, logistics, clinics and field crews." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- Newsreader stands in for the proprietary bureauSerif: light-weight serif display with tight tracking -->
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200;6..72,300;6..72,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* Handhold tokens */
+    --coral:#e27457; --off-white:#f2f1ed; --white:#ffffff; --black:#000000;
+    --stone:#dbd7cd; --brown:#2a2420;
+    --serif:'Newsreader',Georgia,serif; --sans:'Inter',sans-serif;
+    /* spacing scale */
+    --s2:8px; --s4:12px; --s5:16px; --s7:20px; --s8:24px; --s10:32px; --s11:40px;
+    --s12:48px; --s13:56px; --s14:64px; --s15:72px; --s16:80px; --s18:120px;
+    --r-sm:8px; --r-lg:24px; --r-xl:32px; --r-pill:9999px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--off-white);color:var(--black);font-size:16px;line-height:24px;-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 var(--s8)}
+
+  /* type roles from the token table */
+  .display{font-family:var(--serif);font-weight:200;font-size:72px;line-height:72px;letter-spacing:-2.16px}
+  .h2{font-family:var(--serif);font-weight:200;font-size:40px;line-height:40px;letter-spacing:-1.2px}
+  .h3{font-family:var(--serif);font-weight:200;font-size:28px;line-height:30px;letter-spacing:-0.84px}
+  .serif-label{font-family:var(--serif);font-weight:200;font-size:20px;line-height:20px;letter-spacing:-0.6px}
+  .ui-small{font-size:14px;line-height:20px;letter-spacing:-0.18px}
+  .caption{font-size:12px;line-height:16px;color:var(--brown)}
+  @media(max-width:760px){
+    .display{font-size:46px;line-height:46px;letter-spacing:-1.4px}
+    .h2{font-size:32px;line-height:32px;letter-spacing:-0.9px}
+  }
+
+  /* buttons — single primary action per screen (black fill); secondary = off-white */
+  .btn{display:inline-block;font-family:var(--sans);font-size:14px;line-height:20px;letter-spacing:-0.18px;padding:14px 24px;border-radius:var(--r-pill);cursor:pointer;border:1px solid transparent;transition:background .2s,border-color .2s,transform .2s}
+  .btn-primary{background:var(--black);color:var(--white)}
+  .btn-primary:hover{background:var(--brown)}
+  .btn-secondary{background:var(--off-white);color:var(--black);border-color:var(--stone)}
+  .btn-secondary:hover{border-color:var(--brown)}
+
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1!important;transform:none!important}}
+
+  /* nav */
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(242,241,237,.82);backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:border-color .3s}
+  header.nav.scrolled{border-bottom:1px solid var(--stone)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo .mark{width:30px;height:30px;border-radius:var(--r-sm);background:var(--black);color:var(--white);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:300;font-size:18px}
+  .logo .name{font-family:var(--serif);font-weight:300;font-size:22px;letter-spacing:-0.5px}
+  .nav-links{display:flex;align-items:center;gap:var(--s10)}
+  .nav-links a{font-size:14px;letter-spacing:-0.18px;color:var(--brown)}
+  .nav-links a:hover{color:var(--black)}
+  .nav-actions{display:flex;align-items:center;gap:var(--s7)}
+  .burger{display:none;background:none;border:none;cursor:pointer}
+  .mobile-menu{display:none;background:var(--off-white);border-top:1px solid var(--stone)}
+  .mobile-menu.open{display:block}
+  .mobile-menu a{display:block;padding:16px 0;font-size:16px;color:var(--black);border-bottom:1px solid var(--stone)}
+  .mobile-menu .btn{margin-top:var(--s5);text-align:center}
+  @media(max-width:760px){.nav-links,.nav-actions{display:none}.burger{display:block}}
+
+  /* hero */
+  .hero{padding:var(--s16) 0 var(--s15)}
+  .hero .eyebrow{font-family:var(--serif);font-weight:200;font-size:20px;letter-spacing:-0.6px;color:var(--brown)}
+  .hero .display{margin-top:var(--s7)}
+  .hero .display .coral{color:var(--coral)}
+  .hero p.sub{font-size:16px;line-height:24px;color:var(--brown);margin-top:var(--s8);max-width:30rem}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:var(--s4);margin-top:var(--s11)}
+  .hero-grid{display:grid;gap:var(--s14);align-items:center}
+  @media(min-width:980px){.hero-grid{grid-template-columns:1.05fr .95fr}}
+  .trust-inline{display:flex;flex-wrap:wrap;gap:8px var(--s7);margin-top:var(--s8)}
+  .trust-inline span{display:flex;align-items:center;gap:7px;font-size:12px;line-height:16px;color:var(--brown)}
+
+  /* hero cards */
+  .card{background:var(--white);border:1px solid var(--stone);border-radius:var(--r-lg)}
+  .stack{display:flex;flex-direction:column;gap:var(--s5)}
+  .clockcard{padding:var(--s8)}
+  .clockcard .row{display:flex;align-items:center;justify-content:space-between}
+  .frame{position:relative;height:140px;border-radius:var(--r-lg);overflow:hidden;background:var(--off-white);margin-top:var(--s5);display:grid;place-items:center}
+  .frame .layer{position:absolute;inset:0;display:grid;place-items:center;transition:opacity .5s}
+  .avatar{width:60px;height:60px;border-radius:var(--r-pill);background:var(--brown);color:var(--white);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:300;font-size:22px}
+  .vbig{width:60px;height:60px;border-radius:var(--r-pill);background:var(--black);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:26px}
+  .darkcard{padding:var(--s8);background:var(--brown);color:var(--off-white);border:none;border-radius:var(--r-lg)}
+  .darkcard .line{display:flex;justify-content:space-between;font-size:14px;letter-spacing:-0.18px;margin-top:10px}
+  .darkcard .l-muted{color:var(--stone)}
+  .pill-tag{display:inline-block;border:1px solid var(--stone);border-radius:var(--r-pill);padding:4px 12px;font-size:12px;color:var(--brown)}
+
+  /* generic section */
+  section.block{padding:var(--s18) 0}
+  .lead{max-width:44rem}
+  .lead .eyebrow{font-family:var(--serif);font-weight:200;font-size:20px;letter-spacing:-0.6px;color:var(--coral)}
+  .lead .h2{margin-top:var(--s5)}
+
+  /* trust strip */
+  .trust-strip{border-top:1px solid var(--stone);border-bottom:1px solid var(--stone);background:var(--white)}
+  .trust-strip .wrap{padding-top:var(--s10);padding-bottom:var(--s10)}
+  .trust-strip .cap{text-align:center;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--brown)}
+  .trust-logos{margin-top:var(--s7);display:flex;flex-wrap:wrap;justify-content:center;gap:14px var(--s11)}
+  .trust-logos span{font-family:var(--serif);font-weight:300;font-size:22px;letter-spacing:-0.5px;color:var(--black);opacity:.45}
+
+  /* problem */
+  .pain-grid{display:grid;gap:var(--s5);margin-top:var(--s12)}
+  @media(min-width:680px){.pain-grid{grid-template-columns:1fr 1fr}}
+  .pain{background:var(--white);border:1px solid var(--stone);border-radius:var(--r-lg);padding:var(--s8)}
+  .pain h3{margin-bottom:10px}
+  .pain p{font-size:16px;line-height:24px;color:var(--brown)}
+  .bridge{margin-top:var(--s12);font-family:var(--serif);font-weight:200;font-size:28px;line-height:34px;letter-spacing:-0.84px;max-width:40rem}
+  .bridge .coral{color:var(--coral)}
+
+  /* how — dark editorial panel */
+  .how{background:var(--brown);color:var(--off-white);border-radius:var(--r-xl);padding:var(--s15) var(--s12)}
+  .how .eyebrow{color:var(--coral)}
+  .how .h2{color:var(--off-white);margin-top:var(--s5)}
+  .steps{display:grid;gap:var(--s11);margin-top:var(--s14)}
+  @media(min-width:760px){.steps{grid-template-columns:repeat(3,1fr)}}
+  .step .n{font-family:var(--serif);font-weight:200;font-size:40px;line-height:40px;letter-spacing:-1.2px;color:var(--coral)}
+  .step h3{margin-top:var(--s5);color:var(--off-white)}
+  .step p{margin-top:var(--s4);font-size:16px;line-height:24px;color:var(--stone)}
+  .how .foot{margin-top:var(--s13);font-family:var(--serif);font-weight:200;font-size:20px;letter-spacing:-0.6px;color:var(--off-white)}
+
+  /* features — editorial list, not a tidy card grid */
+  .feat-grid{display:grid;gap:0;margin-top:var(--s12);border-top:1px solid var(--stone)}
+  @media(min-width:760px){.feat-grid{grid-template-columns:1fr 1fr}}
+  .feat{padding:var(--s10) 0;border-bottom:1px solid var(--stone);display:flex;gap:var(--s7)}
+  @media(min-width:760px){.feat:nth-child(odd){padding-right:var(--s11);border-right:1px solid var(--stone)} .feat:nth-child(even){padding-left:var(--s11)}}
+  .feat .idx{font-family:var(--serif);font-weight:200;font-size:20px;letter-spacing:-0.6px;color:var(--coral);min-width:32px}
+  .feat h3{font-size:20px;line-height:24px;letter-spacing:-0.3px;font-family:var(--sans);font-weight:500}
+  .feat p{margin-top:8px;font-size:15px;line-height:22px;color:var(--brown)}
+
+  /* proof */
+  .proof{background:var(--white);border-top:1px solid var(--stone);border-bottom:1px solid var(--stone)}
+  .tgrid{display:grid;gap:var(--s5);margin-top:var(--s12)}
+  @media(min-width:760px){.tgrid{grid-template-columns:repeat(3,1fr)}}
+  .quote{border:1px solid var(--stone);border-radius:var(--r-lg);padding:var(--s8);display:flex;flex-direction:column;background:var(--off-white)}
+  .quote blockquote{font-family:var(--serif);font-weight:300;font-size:22px;line-height:28px;letter-spacing:-0.4px;flex:1}
+  .quote figcaption{margin-top:var(--s7);font-size:14px;line-height:20px}
+  .quote .role{font-weight:500} .quote .org{color:var(--brown)}
+
+  /* pricing */
+  .toggle{display:inline-flex;gap:4px;border:1px solid var(--stone);border-radius:var(--r-pill);padding:4px;margin-top:var(--s8)}
+  .toggle button{border:none;background:transparent;border-radius:var(--r-pill);padding:8px 18px;font-family:var(--sans);font-size:14px;letter-spacing:-0.18px;color:var(--brown);cursor:pointer}
+  .toggle button.active{background:var(--black);color:var(--white)}
+  .plans{display:grid;gap:var(--s5);margin-top:var(--s12);align-items:start}
+  @media(min-width:760px){.plans{grid-template-columns:repeat(3,1fr)}}
+  .plan{border:1px solid var(--stone);border-radius:var(--r-lg);padding:var(--s10);display:flex;flex-direction:column;background:var(--white)}
+  .plan.hi{background:var(--brown);border-color:var(--brown);color:var(--off-white)}
+  .plan .pname{font-family:var(--serif);font-weight:200;font-size:28px;letter-spacing:-0.84px}
+  .plan .ptag{font-size:14px;line-height:20px;color:var(--brown);margin-top:6px}
+  .plan.hi .ptag{color:var(--stone)}
+  .plan .price{margin-top:var(--s8);display:flex;align-items:baseline;gap:6px}
+  .plan .amt{font-family:var(--serif);font-weight:200;font-size:48px;letter-spacing:-1.4px}
+  .plan .unit{font-size:14px;color:var(--brown)} .plan.hi .unit{color:var(--stone)}
+  .plan ul{list-style:none;margin-top:var(--s8);flex:1;display:flex;flex-direction:column;gap:12px}
+  .plan li{display:flex;gap:10px;font-size:15px;line-height:22px}
+  .plan li svg{flex-shrink:0;margin-top:3px}
+  .plan .cta{margin-top:var(--s10);text-align:center}
+  .price-note{text-align:center;margin-top:var(--s10);font-size:14px;color:var(--brown)}
+  .price-note a{color:var(--black);border-bottom:1px solid var(--stone)}
+
+  /* faq */
+  .faq{max-width:780px;margin:0 auto}
+  .faq-list{margin-top:var(--s12);border-top:1px solid var(--stone)}
+  .faq-item{border-bottom:1px solid var(--stone)}
+  .faq-q{width:100%;background:none;border:none;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:var(--s7);padding:var(--s8) 0;font-family:var(--serif);font-weight:300;font-size:22px;line-height:26px;letter-spacing:-0.4px;color:var(--black)}
+  .faq-q .pl{font-size:26px;color:var(--coral);transition:transform .2s;flex-shrink:0}
+  .faq-item.open .faq-q .pl{transform:rotate(45deg)}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .faq-item.open .faq-a{max-height:240px}
+  .faq-a p{padding:0 0 var(--s8);font-size:16px;line-height:24px;color:var(--brown);max-width:90%}
+
+  /* final cta */
+  .final{text-align:center}
+  .final .card-cta{background:var(--brown);color:var(--off-white);border-radius:var(--r-xl);padding:var(--s18) var(--s10)}
+  .final .display{color:var(--off-white)}
+  .final p{margin:var(--s8) auto 0;max-width:32rem;color:var(--stone);font-size:16px;line-height:24px}
+  .cta-form{display:flex;flex-direction:column;gap:12px;max-width:30rem;margin:var(--s11) auto 0}
+  @media(min-width:560px){.cta-form{flex-direction:row}}
+  .cta-form input{flex:1;border-radius:var(--r-pill);border:1px solid var(--stone);background:var(--off-white);color:var(--black);padding:14px 22px;font-family:var(--sans);font-size:14px;outline:none}
+  .cta-form input:focus{border-color:var(--off-white)}
+  .cta-form .btn-light{background:var(--off-white);color:var(--black)}
+  .cta-form .btn-light:hover{background:var(--white)}
+  .final .fine{margin-top:var(--s7);font-size:12px;color:var(--stone)}
+
+  /* footer */
+  footer{padding:var(--s14) 0 var(--s10)}
+  .foot-grid{display:grid;gap:var(--s11)}
+  @media(min-width:760px){.foot-grid{grid-template-columns:1.6fr 1fr 1fr 1fr}}
+  footer .desc{font-size:16px;line-height:24px;color:var(--brown);margin-top:var(--s5);max-width:20rem}
+  footer .meta{font-size:14px;color:var(--brown);margin-top:10px}
+  footer h4{font-family:var(--sans);font-weight:500;font-size:14px;letter-spacing:-0.18px}
+  footer ul{list-style:none;margin-top:var(--s5);display:flex;flex-direction:column;gap:12px}
+  footer ul a{font-size:14px;color:var(--brown)} footer ul a:hover{color:var(--black)}
+  .foot-bottom{margin-top:var(--s13);border-top:1px solid var(--stone);padding-top:var(--s8);display:flex;flex-direction:column;gap:10px;justify-content:space-between}
+  @media(min-width:560px){.foot-bottom{flex-direction:row;align-items:center}}
+  .foot-bottom p{font-size:12px;color:var(--brown)}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="logo"><span class="mark">D</span><span class="name">Dalert</span></a>
+    <nav class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="#" class="ui-small" style="color:var(--brown)">Log in</a>
+      <a href="#start" class="btn btn-primary">Start free</a>
+    </div>
+    <button class="burger" id="burger" aria-label="Menu">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2a2420" stroke-width="1.5"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg>
+    </button>
+  </div>
+  <div class="mobile-menu wrap" id="mobileMenu">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="#start" class="btn btn-primary">Start free</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="reveal">
+      <span class="eyebrow">Proof-first attendance</span>
+      <h1 class="display">Attendance you can trust.<br><span class="coral">Hours you can pay.</span></h1>
+      <p class="sub">Dalert turns daily clock-ins into verified, payroll-ready hours for shift-based teams — security, cleaning, retail, construction, logistics, clinics and field crews.</p>
+      <div class="hero-cta">
+        <a href="#start" class="btn btn-primary">Start free</a>
+        <a href="#how" class="btn btn-secondary">See how it works</a>
+      </div>
+      <div class="trust-inline">
+        <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2a2420" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg> Pricing in N$</span>
+        <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2a2420" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg> No card needed</span>
+        <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2a2420" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg> Set up in a day</span>
+      </div>
+    </div>
+    <div class="stack reveal">
+      <div class="card clockcard">
+        <div class="row">
+          <span class="serif-label">Clock in</span>
+          <span class="caption" style="font-family:var(--sans)">06:58 · Gate B</span>
+        </div>
+        <div class="frame">
+          <div class="layer" id="layer0" style="opacity:1"><div class="avatar">JK</div></div>
+          <div class="layer" id="layer1" style="opacity:0"><svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z" fill="#e27457"/><circle cx="12" cy="9" r="2.5" fill="#fff"/></svg></div>
+          <div class="layer" id="layer2" style="opacity:0"><div class="vbig">✓</div></div>
+        </div>
+        <div class="row" style="margin-top:var(--s5)">
+          <span class="caption" id="demoLabel" style="font-family:var(--sans);font-size:14px;color:var(--brown)">Photo check</span>
+          <span class="caption" id="demoState" style="font-family:var(--sans);font-size:14px">…</span>
+        </div>
+      </div>
+      <div class="darkcard">
+        <div class="row" style="display:flex;justify-content:space-between;align-items:center">
+          <span class="serif-label" style="color:var(--off-white)">This week · Site B</span>
+          <span class="pill-tag" style="color:var(--off-white);border-color:#4a423b">Payroll-ready</span>
+        </div>
+        <div class="line"><span>Josef K.</span><span>8.0h&nbsp;&nbsp;<span style="color:#9fbfa4">OK</span></span></div>
+        <div class="line"><span>Maria N.</span><span>7.5h&nbsp;&nbsp;<span style="color:#9fbfa4">OK</span></span></div>
+        <div class="line"><span>Petrus A.</span><span>+1.1h&nbsp;&nbsp;<span style="color:#e0a566">OT</span></span></div>
+        <div class="line l-muted" style="border-top:1px solid #4a423b;margin-top:var(--s5);padding-top:var(--s5)"><span>Total payable</span><span style="color:var(--off-white)">23.6h</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<section class="trust-strip">
+  <div class="wrap">
+    <p class="cap">Built for shift-based teams across Namibia</p>
+    <div class="trust-logos">
+      <span>Security</span><span>Cleaning</span><span>Construction</span><span>Retail</span><span>Logistics</span><span>Clinics</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="block">
+  <div class="wrap">
+    <div class="lead reveal">
+      <span class="eyebrow">Sound familiar?</span>
+      <h2 class="h2">Attendance lives on WhatsApp, paper, and Excel — and none of them agree.</h2>
+    </div>
+    <div class="pain-grid">
+      <div class="pain reveal"><h3 class="h3">“Did they actually show up?”</h3><p>Workers message “I’m here” — but there’s no proof of where or when.</p></div>
+      <div class="pain reveal"><h3 class="h3">Buddy-punching &amp; time theft</h3><p>One person clocks in for a friend who never arrived. You pay for hours nobody worked.</p></div>
+      <div class="pain reveal"><h3 class="h3">Hours scribbled on paper</h3><p>Notes get lost, numbers get copied wrong, and payday turns into an argument.</p></div>
+      <div class="pain reveal"><h3 class="h3">Payroll takes all day</h3><p>Chasing messages and fixing Excel before anyone can get paid.</p></div>
+    </div>
+    <p class="bridge reveal">Dalert turns “I think they were there” into <span class="coral">proof you can pay on.</span></p>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="block" id="how" style="padding-top:0">
+  <div class="wrap">
+    <div class="how reveal">
+      <span class="eyebrow">How it works</span>
+      <h2 class="h2">From clock-in to payroll, without the chase.</h2>
+      <div class="steps">
+        <div class="step"><div class="n">01</div><h3 class="h3">Staff clock in</h3><p>A tap takes a photo and drops a GPS pin at the job site. Real proof of who, where, and when.</p></div>
+        <div class="step"><div class="n">02</div><h3 class="h3">You see it live</h3><p>Who’s on shift, who’s late, who missed work — in real time, across every site.</p></div>
+        <div class="step"><div class="n">03</div><h3 class="h3">Export clean hours</h3><p>Approve shifts, fix missed clock-outs, send regular + overtime totals to payroll.</p></div>
+      </div>
+      <p class="foot">Your team can be clocking in this afternoon.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="block" id="features" style="padding-top:0">
+  <div class="wrap">
+    <div class="lead reveal">
+      <span class="eyebrow">What you get</span>
+      <h2 class="h2">Everything you need to trust the hours before you pay them.</h2>
+    </div>
+    <div class="feat-grid reveal">
+      <div class="feat"><span class="idx">01</span><div><h3>Verified clock-in</h3><p>Photo + GPS at the job site, so every clock-in is real. Stop buddy-punching for good.</p></div></div>
+      <div class="feat"><span class="idx">02</span><div><h3>Payroll-ready timesheets</h3><p>Regular, overtime and approved corrections totalled into a clean CSV.</p></div></div>
+      <div class="feat"><span class="idx">03</span><div><h3>Geofencing</h3><p>Workers can only clock in inside the site boundary you set.</p></div></div>
+      <div class="feat"><span class="idx">04</span><div><h3>Shift scheduling</h3><p>Assign workers to sites and shifts, and see plan vs. reality.</p></div></div>
+      <div class="feat"><span class="idx">05</span><div><h3>Live dashboard</h3><p>Who’s on shift, who’s late, who’s absent — right now.</p></div></div>
+      <div class="feat"><span class="idx">06</span><div><h3>Overtime &amp; breaks</h3><p>Rules applied automatically, flagged for review before payday.</p></div></div>
+      <div class="feat"><span class="idx">07</span><div><h3>Offline clock-in</h3><p>Low signal? Clock-ins sync as soon as the phone reconnects.</p></div></div>
+      <div class="feat"><span class="idx">08</span><div><h3>Multi-site management</h3><p>Every branch and crew in one account, one view.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF -->
+<section class="block proof">
+  <div class="wrap">
+    <div class="lead reveal">
+      <span class="eyebrow">Why teams switch</span>
+      <h2 class="h2">Less chasing. Fewer disputes. Cleaner payroll.</h2>
+    </div>
+    <div class="tgrid">
+      <figure class="quote reveal"><blockquote>“We cut payroll prep from a full day to about an hour.”</blockquote><figcaption><span class="role">Operations Manager</span><br><span class="org">Security company · 30 guards</span></figcaption></figure>
+      <figure class="quote reveal"><blockquote>“The photo and GPS settle who showed up before any argument starts.”</blockquote><figcaption><span class="role">Owner</span><br><span class="org">Cleaning services · 18 staff</span></figcaption></figure>
+      <figure class="quote reveal"><blockquote>“Setup took an afternoon. Supervisors use it because it’s just a tap.”</blockquote><figcaption><span class="role">Site Supervisor</span><br><span class="org">Construction · 45 workers</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="block" id="pricing">
+  <div class="wrap">
+    <div class="lead reveal" style="text-align:center;margin:0 auto">
+      <span class="eyebrow">Pricing</span>
+      <h2 class="h2">Start free. Pay when your team grows.</h2>
+      <p class="ui-small" style="color:var(--brown);margin-top:12px">Prices in Namibian dollars. No card needed to start.</p>
+      <div class="toggle" id="toggle">
+        <button data-annual="false">Monthly</button>
+        <button class="active" data-annual="true">Annual · save ~2 months</button>
+      </div>
+    </div>
+    <div class="plans">
+      <div class="plan reveal">
+        <div class="pname">Starter</div><div class="ptag">For small crews getting started</div>
+        <div class="price"><span class="amt" data-m="0">Free</span><span class="unit"></span></div>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Up to 5 workers</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Verified clock-in / out</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Basic weekly timesheet</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>1 site</li>
+        </ul>
+        <a href="#start" class="btn btn-secondary cta">Start free</a>
+      </div>
+      <div class="plan hi reveal">
+        <div class="pname">Team</div><div class="ptag">For growing shift-based teams</div>
+        <div class="price"><span class="amt" data-m="299">N$2,990</span><span class="unit" data-unit>/year</span></div>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Unlimited workers</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>GPS + geofencing</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Shift scheduling</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Supervisor approvals</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Payroll CSV export</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Overtime rules</li>
+        </ul>
+        <a href="#start" class="btn btn-light cta" style="background:var(--off-white);color:var(--black)">Choose Team</a>
+      </div>
+      <div class="plan reveal">
+        <div class="pname">Business</div><div class="ptag">For multi-site operations</div>
+        <div class="price"><span class="amt" data-m="899">N$8,990</span><span class="unit" data-unit>/year</span></div>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Everything in Team</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Multi-site dashboards</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Manager roles</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Advanced reports</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Priority support</li>
+        </ul>
+        <a href="#start" class="btn btn-secondary cta">Talk to us</a>
+      </div>
+    </div>
+    <p class="price-note reveal">Need per-worker pricing for a large workforce? <a href="#start">Talk to us.</a> · Cancel anytime.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="block" id="faq" style="background:var(--white);border-top:1px solid var(--stone)">
+  <div class="wrap">
+    <div class="faq">
+      <div class="lead reveal" style="text-align:center;margin:0 auto">
+        <span class="eyebrow">Questions &amp; answers</span>
+        <h2 class="h2">Everything you might be wondering.</h2>
+      </div>
+      <div class="faq-list" id="faqList">
+        <div class="faq-item open"><button class="faq-q">Do employees need their own phones?<span class="pl">+</span></button><div class="faq-a"><p>Workers clock in from any smartphone. Supervisors can also clock in a whole crew from one device at the site, so not everyone needs their own phone.</p></div></div>
+        <div class="faq-item"><button class="faq-q">Does it work offline?<span class="pl">+</span></button><div class="faq-a"><p>Yes. Clock-ins are saved on the phone and sync automatically as soon as there’s a connection, so a weak signal never loses a record.</p></div></div>
+        <div class="faq-item"><button class="faq-q">How does the verification work?<span class="pl">+</span></button><div class="faq-a"><p>When a worker clocks in, Dalert captures a photo and the GPS location and checks it against the site you set. You get proof of who clocked in and where.</p></div></div>
+        <div class="faq-item"><button class="faq-q">How fast can we set up?<span class="pl">+</span></button><div class="faq-a"><p>Most teams are live in a day. Add your sites, add your workers, and they can clock in the same afternoon.</p></div></div>
+        <div class="faq-item"><button class="faq-q">Is our data secure?<span class="pl">+</span></button><div class="faq-a"><p>Your data is encrypted and only your account can see it. We never sell data, and you can export or delete it whenever you want.</p></div></div>
+        <div class="faq-item"><button class="faq-q">Does it export to our payroll?<span class="pl">+</span></button><div class="faq-a"><p>Dalert produces a clean CSV with regular and overtime hours that you can import into your payroll or hand to your accountant.</p></div></div>
+        <div class="faq-item"><button class="faq-q">Can I cancel anytime?<span class="pl">+</span></button><div class="faq-a"><p>Yes. There’s no lock-in contract — upgrade, downgrade, or cancel whenever you need to.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="block final" id="start">
+  <div class="wrap">
+    <div class="card-cta reveal">
+      <h2 class="display">Know who worked.<br>Pay them right.</h2>
+      <p>Set up your team in an afternoon. Your first 5 workers are free, forever.</p>
+      <form class="cta-form" onsubmit="return false">
+        <input type="email" required placeholder="you@company.com" aria-label="Work email" />
+        <button type="submit" class="btn btn-light">Start free</button>
+      </form>
+      <p class="fine">No card needed · Set up in a day · Cancel anytime</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="#top" class="logo"><span class="mark">D</span><span class="name">Dalert</span></a>
+        <p class="desc">Proof-first attendance and payroll-ready timesheets for shift-based teams.</p>
+        <p class="meta">dalert.app · Namibia · Prices in N$</p>
+      </div>
+      <div><h4>Product</h4><ul><li><a href="#features">Features</a></li><li><a href="#how">How it works</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Contact</a></li><li><a href="#">Careers</a></li></ul></div>
+      <div><h4>Legal</h4><ul><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">Data protection</a></li></ul></div>
+    </div>
+    <div class="foot-bottom">
+      <p>© <span id="year"></span> Dalert. Attendance you can trust. Hours you can pay.</p>
+      <p>Your data is encrypted and never sold.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  var nav=document.getElementById('nav');
+  window.addEventListener('scroll',function(){ if(window.scrollY>40)nav.classList.add('scrolled');else nav.classList.remove('scrolled'); });
+  var burger=document.getElementById('burger'),mm=document.getElementById('mobileMenu');
+  burger.addEventListener('click',function(){mm.classList.toggle('open');});
+  mm.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mm.classList.remove('open');});});
+
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){ document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('in');}); }
+  else{
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+  }
+
+  (function(){
+    var l0=document.getElementById('layer0'),l1=document.getElementById('layer1'),l2=document.getElementById('layer2');
+    var label=document.getElementById('demoLabel'),state=document.getElementById('demoState');
+    var labels=['Photo check','Gate B · Windhoek','Verified on site'];
+    if(reduce){ l0.style.opacity=0;l2.style.opacity=1;label.textContent=labels[2];state.textContent='✓ done';state.style.color='#2a2420';return; }
+    var step=0;
+    setInterval(function(){
+      step=(step+1)%3;
+      [l0,l1,l2].forEach(function(l,i){l.style.opacity=(i===step)?1:0;});
+      label.textContent=labels[step];
+      if(step===2){state.textContent='✓ done';state.style.color='#2a2420';}else{state.textContent='…';state.style.color='var(--brown)';}
+    },1600);
+  })();
+
+  (function(){
+    var annual=true,toggle=document.getElementById('toggle');
+    function render(){
+      document.querySelectorAll('.plan .amt').forEach(function(el){
+        var m=parseInt(el.getAttribute('data-m'),10);
+        if(m===0){el.textContent='Free';return;}
+        el.textContent='N$'+(annual?m*10:m).toLocaleString('en-US');
+      });
+      document.querySelectorAll('.plan .unit[data-unit]').forEach(function(el){el.textContent=annual?'/year':'/month';});
+      toggle.querySelectorAll('button').forEach(function(b){b.classList.toggle('active',(b.getAttribute('data-annual')==='true')===annual);});
+    }
+    toggle.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){annual=b.getAttribute('data-annual')==='true';render();});});
+    render();
+  })();
+
+  document.querySelectorAll('.faq-q').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var item=btn.parentElement,open=item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(it){it.classList.remove('open');});
+      if(!open)item.classList.add('open');
+    });
+  });
+</script>
+</body>
 </html>
