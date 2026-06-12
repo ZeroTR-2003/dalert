@@ -185,12 +185,17 @@
   .final .card-cta{background:var(--brown);color:var(--off-white);border-radius:var(--r-xl);padding:var(--s18) var(--s10)}
   .final .display{color:var(--off-white)}
   .final p{margin:var(--s8) auto 0;max-width:32rem;color:var(--stone);font-size:16px;line-height:24px}
-  .cta-form{display:flex;flex-direction:column;gap:12px;max-width:30rem;margin:var(--s11) auto 0}
-  @media(min-width:560px){.cta-form{flex-direction:row}}
-  .cta-form input{flex:1;border-radius:var(--r-pill);border:1px solid var(--stone);background:var(--off-white);color:var(--black);padding:14px 22px;font-family:var(--sans);font-size:14px;outline:none}
-  .cta-form input:focus{border-color:var(--off-white)}
-  .cta-form .btn-light{background:var(--off-white);color:var(--black)}
+  .cta-form{display:grid;grid-template-columns:1fr;gap:12px;width:min(100%,42rem);margin:var(--s11) auto 0}
+  .cta-form input,.cta-form button{min-height:52px}
+  .cta-form input{width:100%;border-radius:var(--r-pill);border:1px solid var(--stone);background:var(--off-white);color:var(--black);padding:0 22px;font-family:var(--sans);font-size:14px;outline:none}
+  .cta-form input:focus{border-color:var(--off-white);box-shadow:0 0 0 3px rgba(242,241,237,.14)}
+  .cta-form .btn-light{display:flex;align-items:center;justify-content:center;background:var(--off-white);color:var(--black);white-space:nowrap}
   .cta-form .btn-light:hover{background:var(--white)}
+  @media(min-width:760px){
+    .cta-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 142px;gap:10px;align-items:center;padding:8px;border:1px solid #4a423b;border-radius:var(--r-pill);background:rgba(242,241,237,.08)}
+    .cta-form input{border-color:transparent;background:var(--off-white)}
+    .cta-form .btn-light{width:142px;padding-left:0;padding-right:0}
+  }
   .cta-form button[disabled]{opacity:.72;cursor:not-allowed}
   .form-status{min-height:20px;margin-top:var(--s5)!important;font-size:14px!important;line-height:20px!important;color:var(--stone)!important}
   .form-status.ok{color:#cfe6c9!important}
