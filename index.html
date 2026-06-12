@@ -205,13 +205,14 @@
 
   /* footer */
   footer{padding:var(--s14) 0 var(--s10)}
-  .foot-grid{display:grid;gap:var(--s11)}
-  @media(min-width:760px){.foot-grid{grid-template-columns:1.6fr 1fr 1fr 1fr}}
-  footer .desc{font-size:16px;line-height:24px;color:var(--brown);margin-top:var(--s5);max-width:20rem}
+  .foot-grid{display:flex;flex-direction:column;gap:var(--s10)}
+  @media(min-width:760px){.foot-grid{flex-direction:row;align-items:flex-start;justify-content:space-between}}
+  footer .desc{font-size:16px;line-height:24px;color:var(--brown);margin-top:var(--s5);max-width:24rem}
   footer .meta{font-size:14px;color:var(--brown);margin-top:10px}
-  footer h4{font-family:var(--sans);font-weight:500;font-size:14px;letter-spacing:-0.18px}
-  footer ul{list-style:none;margin-top:var(--s5);display:flex;flex-direction:column;gap:12px}
-  footer ul a{font-size:14px;color:var(--brown)} footer ul a:hover{color:var(--black)}
+  .foot-links{display:flex;flex-wrap:wrap;gap:10px var(--s7);max-width:30rem}
+  .foot-links a{font-size:14px;color:var(--brown);border-bottom:1px solid transparent}
+  .foot-links a:hover{color:var(--black);border-color:var(--stone)}
+  @media(max-width:560px){.foot-links{flex-direction:column;gap:12px}}
   .foot-bottom{margin-top:var(--s13);border-top:1px solid var(--stone);padding-top:var(--s8);display:flex;flex-direction:column;gap:10px;justify-content:space-between}
   @media(min-width:560px){.foot-bottom{flex-direction:row;align-items:center}}
   .foot-bottom p{font-size:12px;color:var(--brown)}
@@ -229,7 +230,6 @@
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-actions">
-      <a href="#" class="ui-small" style="color:var(--brown)">Log in</a>
       <a href="#start" class="btn btn-primary">Start free</a>
     </div>
     <button class="burger" id="burger" aria-label="Menu">
@@ -475,13 +475,16 @@
         <p class="desc">Proof-first attendance and payroll-ready timesheets for shift-based teams.</p>
         <p class="meta">dalert.app · Namibia · Prices in N$</p>
       </div>
-      <div><h4>Product</h4><ul><li><a href="#features">Features</a></li><li><a href="#how">How it works</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#faq">FAQ</a></li></ul></div>
-      <div><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Contact</a></li><li><a href="#">Careers</a></li></ul></div>
-      <div><h4>Legal</h4><ul><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">Data protection</a></li></ul></div>
+      <nav class="foot-links" aria-label="Footer navigation">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="#start">Start free</a>
+      </nav>
     </div>
     <div class="foot-bottom">
       <p>© <span id="year"></span> Dalert. Attendance you can trust. Hours you can pay.</p>
-      <p>Your data is encrypted and never sold.</p>
     </div>
   </div>
 </footer>
