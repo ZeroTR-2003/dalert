@@ -1,575 +1,498 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dalert</title>
-<meta name="description" content="Dalert turns daily clock-ins into verified, payroll-ready hours for shift-based teams — security, cleaning, retail, construction, logistics, clinics and field crews." />
-<meta name="theme-color" content="#2a2420" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="manifest" href="/site.webmanifest" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<!-- Newsreader stands in for the proprietary bureauSerif: light-weight serif display with tight tracking -->
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200;6..72,300;6..72,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
-<style>
-  :root{
-    /* Handhold tokens */
-    --coral:#e27457; --off-white:#f2f1ed; --white:#ffffff; --black:#000000;
-    --stone:#dbd7cd; --brown:#2a2420;
-    --serif:'Newsreader',Georgia,serif; --sans:'Inter',sans-serif;
-    /* spacing scale */
-    --s2:8px; --s4:12px; --s5:16px; --s7:20px; --s8:24px; --s10:32px; --s11:40px;
-    --s12:48px; --s13:56px; --s14:64px; --s15:72px; --s16:80px; --s18:120px;
-    --r-sm:8px; --r-lg:24px; --r-xl:32px; --r-pill:9999px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{font-family:var(--sans);background:var(--off-white);color:var(--black);font-size:16px;line-height:24px;-webkit-font-smoothing:antialiased}
-  a{text-decoration:none;color:inherit}
-  .wrap{max-width:1120px;margin:0 auto;padding:0 var(--s8)}
-
-  /* type roles from the token table */
-  .display{font-family:var(--serif);font-weight:200;font-size:72px;line-height:72px;letter-spacing:-2.16px}
-  .h2{font-family:var(--serif);font-weight:200;font-size:40px;line-height:40px;letter-spacing:-1.2px}
-  .h3{font-family:var(--serif);font-weight:200;font-size:28px;line-height:30px;letter-spacing:-0.84px}
-  .serif-label{font-family:var(--serif);font-weight:200;font-size:20px;line-height:20px;letter-spacing:-0.6px}
-  .ui-small{font-size:14px;line-height:20px;letter-spacing:-0.18px}
-  .caption{font-size:12px;line-height:16px;color:var(--brown)}
-  @media(max-width:760px){
-    .display{font-size:46px;line-height:46px;letter-spacing:-1.4px}
-    .h2{font-size:32px;line-height:32px;letter-spacing:-0.9px}
-  }
-
-  /* buttons — single primary action per screen (black fill); secondary = off-white */
-  .btn{display:inline-block;font-family:var(--sans);font-size:14px;line-height:20px;letter-spacing:-0.18px;padding:14px 24px;border-radius:var(--r-pill);cursor:pointer;border:1px solid transparent;transition:background .2s,border-color .2s,transform .2s}
-  .btn-primary{background:var(--black);color:var(--white)}
-  .btn-primary:hover{background:var(--brown)}
-  .btn-secondary{background:var(--off-white);color:var(--black);border-color:var(--stone)}
-  .btn-secondary:hover{border-color:var(--brown)}
-
-  .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease}
-  .reveal.in{opacity:1;transform:none}
-  @media(prefers-reduced-motion:reduce){.reveal{opacity:1!important;transform:none!important}}
-
-  /* nav */
-  header.nav{position:sticky;top:0;z-index:50;background:rgba(242,241,237,.82);backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:border-color .3s}
-  header.nav.scrolled{border-bottom:1px solid var(--stone)}
-  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
-  .logo{display:flex;align-items:center;gap:10px}
-  .logo .mark{width:30px;height:30px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 1px 0 rgba(255,255,255,.35) inset,0 8px 18px rgba(42,36,32,.12)}
-  .logo .mark img{display:block;width:100%;height:100%}
-  .logo .name{font-family:var(--serif);font-weight:300;font-size:22px;letter-spacing:-0.5px}
-  .nav-links{display:flex;align-items:center;gap:var(--s10)}
-  .nav-links a{font-size:14px;letter-spacing:-0.18px;color:var(--brown)}
-  .nav-links a:hover{color:var(--black)}
-  .nav-actions{display:flex;align-items:center;gap:var(--s7)}
-  .burger{display:none;background:none;border:none;cursor:pointer}
-  .mobile-menu{display:none;background:var(--off-white);border-top:1px solid var(--stone)}
-  .mobile-menu.open{display:block}
-  .mobile-menu a{display:block;padding:16px 0;font-size:16px;color:var(--black);border-bottom:1px solid var(--stone)}
-  .mobile-menu .btn{margin-top:var(--s5);text-align:center}
-  @media(max-width:760px){.nav-links,.nav-actions{display:none}.burger{display:block}}
-
-  /* hero */
-  .hero{padding:var(--s16) 0 var(--s15)}
-  .hero .eyebrow{font-family:var(--serif);font-weight:200;font-size:20px;letter-spacing:-0.6px;color:var(--brown)}
-  .hero .display{margin-top:var(--s7)}
-  .hero .display .coral{color:var(--coral)}
-  .hero p.sub{font-size:16px;line-height:24px;color:var(--brown);margin-top:var(--s8);max-width:30rem}
-  .hero-cta{display:flex;flex-wrap:wrap;gap:var(--s4);margin-top:var(--s11)}
-  .hero-grid{display:grid;gap:var(--s14);align-items:center}
-  @media(min-width:980px){.hero-grid{grid-template-columns:1.05fr .95fr}}
-  .trust-inline{display:flex;flex-wrap:wrap;gap:8px var(--s7);margin-top:var(--s8)}
-  .trust-inline span{display:flex;align-items:center;gap:7px;font-size:12px;line-height:16px;color:var(--brown)}
-
-  /* hero cards */
-  .card{background:var(--white);border:1px solid var(--stone);border-radius:var(--r-lg)}
-  .stack{display:flex;flex-direction:column;gap:var(--s5)}
-  .clockcard{padding:var(--s8)}
-  .clockcard .row{display:flex;align-items:center;justify-content:space-between}
-  .frame{position:relative;height:140px;border-radius:var(--r-lg);overflow:hidden;background:var(--off-white);margin-top:var(--s5);display:grid;place-items:center}
-  .frame .layer{position:absolute;inset:0;display:grid;place-items:center;transition:opacity .5s}
-  .avatar{width:60px;height:60px;border-radius:var(--r-pill);background:var(--brown);color:var(--white);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:300;font-size:22px}
-  .vbig{width:60px;height:60px;border-radius:var(--r-pill);background:var(--black);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:26px}
-  .darkcard{padding:var(--s8);background:var(--brown);color:var(--off-white);border:none;border-radius:var(--r-lg)}
-  .darkcard .line{display:flex;justify-content:space-between;font-size:14px;letter-spacing:-0.18px;margin-top:10px}
-  .darkcard .l-muted{color:var(--stone)}
-  .pill-tag{display:inline-block;border:1px solid var(--stone);border-radius:var(--r-pill);padding:4px 12px;font-size:12px;color:var(--brown)}
-
-  /* generic section */
-  section.block{padding:var(--s18) 0}
-  .lead{max-width:44rem}
-  .lead .eyebrow{font-family:var(--serif);font-weight:200;font-size:20px;letter-spacing:-0.6px;color:var(--coral)}
-  .lead .h2{margin-top:var(--s5)}
-
-  /* trust strip */
-  .trust-strip{border-top:1px solid var(--stone);border-bottom:1px solid var(--stone);background:var(--white)}
-  .trust-strip .wrap{padding-top:var(--s10);padding-bottom:var(--s10)}
-  .trust-strip .cap{text-align:center;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--brown)}
-  .trust-logos{margin-top:var(--s7);display:flex;flex-wrap:wrap;justify-content:center;gap:14px var(--s11)}
-  .trust-logos span{font-family:var(--serif);font-weight:300;font-size:22px;letter-spacing:-0.5px;color:var(--black);opacity:.45}
-
-  /* problem */
-  .pain-grid{display:grid;gap:var(--s5);margin-top:var(--s12)}
-  @media(min-width:680px){.pain-grid{grid-template-columns:1fr 1fr}}
-  .pain{background:var(--white);border:1px solid var(--stone);border-radius:var(--r-lg);padding:var(--s8)}
-  .pain h3{margin-bottom:10px}
-  .pain p{font-size:16px;line-height:24px;color:var(--brown)}
-  .bridge{margin-top:var(--s12);font-family:var(--serif);font-weight:200;font-size:28px;line-height:34px;letter-spacing:-0.84px;max-width:40rem}
-  .bridge .coral{color:var(--coral)}
-
-  /* how — dark editorial panel */
-  .how{background:var(--brown);color:var(--off-white);border-radius:var(--r-xl);padding:var(--s15) var(--s12)}
-  .how .eyebrow{color:var(--coral)}
-  .how .h2{color:var(--off-white);margin-top:var(--s5)}
-  .steps{display:grid;gap:var(--s11);margin-top:var(--s14)}
-  @media(min-width:760px){.steps{grid-template-columns:repeat(3,1fr)}}
-  .step .n{font-family:var(--serif);font-weight:200;font-size:40px;line-height:40px;letter-spacing:-1.2px;color:var(--coral)}
-  .step h3{margin-top:var(--s5);color:var(--off-white)}
-  .step p{margin-top:var(--s4);font-size:16px;line-height:24px;color:var(--stone)}
-  .how .foot{margin-top:var(--s13);font-family:var(--serif);font-weight:200;font-size:20px;letter-spacing:-0.6px;color:var(--off-white)}
-
-  /* features — editorial list, not a tidy card grid */
-  .feat-grid{display:grid;gap:0;margin-top:var(--s12);border-top:1px solid var(--stone)}
-  @media(min-width:760px){.feat-grid{grid-template-columns:1fr 1fr}}
-  .feat{padding:var(--s10) 0;border-bottom:1px solid var(--stone);display:flex;gap:var(--s7)}
-  @media(min-width:760px){.feat:nth-child(odd){padding-right:var(--s11);border-right:1px solid var(--stone)} .feat:nth-child(even){padding-left:var(--s11)}}
-  .feat .idx{font-family:var(--serif);font-weight:200;font-size:20px;letter-spacing:-0.6px;color:var(--coral);min-width:32px}
-  .feat h3{font-size:20px;line-height:24px;letter-spacing:-0.3px;font-family:var(--sans);font-weight:500}
-  .feat p{margin-top:8px;font-size:15px;line-height:22px;color:var(--brown)}
-
-  /* proof */
-  .proof{background:var(--white);border-top:1px solid var(--stone);border-bottom:1px solid var(--stone)}
-  .tgrid{display:grid;gap:var(--s5);margin-top:var(--s12)}
-  @media(min-width:760px){.tgrid{grid-template-columns:repeat(3,1fr)}}
-  .quote{border:1px solid var(--stone);border-radius:var(--r-lg);padding:var(--s8);display:flex;flex-direction:column;background:var(--off-white)}
-  .quote blockquote{font-family:var(--serif);font-weight:300;font-size:22px;line-height:28px;letter-spacing:-0.4px;flex:1}
-  .quote figcaption{margin-top:var(--s7);font-size:14px;line-height:20px}
-  .quote .role{font-weight:500} .quote .org{color:var(--brown)}
-
-  /* pricing */
-  .toggle{display:inline-flex;gap:4px;border:1px solid var(--stone);border-radius:var(--r-pill);padding:4px;margin-top:var(--s8)}
-  .toggle button{border:none;background:transparent;border-radius:var(--r-pill);padding:8px 18px;font-family:var(--sans);font-size:14px;letter-spacing:-0.18px;color:var(--brown);cursor:pointer}
-  .toggle button.active{background:var(--black);color:var(--white)}
-  .plans{display:grid;gap:var(--s5);margin-top:var(--s12);align-items:start}
-  @media(min-width:760px){.plans{grid-template-columns:repeat(3,1fr)}}
-  .plan{border:1px solid var(--stone);border-radius:var(--r-lg);padding:var(--s10);display:flex;flex-direction:column;background:var(--white)}
-  .plan.hi{background:var(--brown);border-color:var(--brown);color:var(--off-white)}
-  .plan .pname{font-family:var(--serif);font-weight:200;font-size:28px;letter-spacing:-0.84px}
-  .plan .ptag{font-size:14px;line-height:20px;color:var(--brown);margin-top:6px}
-  .plan.hi .ptag{color:var(--stone)}
-  .plan .price{margin-top:var(--s8);display:flex;align-items:baseline;gap:6px}
-  .plan .amt{font-family:var(--serif);font-weight:200;font-size:48px;letter-spacing:-1.4px}
-  .plan .unit{font-size:14px;color:var(--brown)} .plan.hi .unit{color:var(--stone)}
-  .plan ul{list-style:none;margin-top:var(--s8);flex:1;display:flex;flex-direction:column;gap:12px}
-  .plan li{display:flex;gap:10px;font-size:15px;line-height:22px}
-  .plan li svg{flex-shrink:0;margin-top:3px}
-  .plan .cta{margin-top:var(--s10);text-align:center}
-  .price-note{text-align:center;margin-top:var(--s10);font-size:14px;color:var(--brown)}
-  .price-note a{color:var(--black);border-bottom:1px solid var(--stone)}
-
-  /* faq */
-  .faq{max-width:780px;margin:0 auto}
-  .faq-list{margin-top:var(--s12);border-top:1px solid var(--stone)}
-  .faq-item{border-bottom:1px solid var(--stone)}
-  .faq-q{width:100%;background:none;border:none;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:var(--s7);padding:var(--s8) 0;font-family:var(--serif);font-weight:300;font-size:22px;line-height:26px;letter-spacing:-0.4px;color:var(--black)}
-  .faq-q .pl{font-size:26px;color:var(--coral);transition:transform .2s;flex-shrink:0}
-  .faq-item.open .faq-q .pl{transform:rotate(45deg)}
-  .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
-  .faq-item.open .faq-a{max-height:240px}
-  .faq-a p{padding:0 0 var(--s8);font-size:16px;line-height:24px;color:var(--brown);max-width:90%}
-
-  /* final cta */
-  .final{text-align:center}
-  .final .card-cta{background:var(--brown);color:var(--off-white);border-radius:var(--r-xl);padding:var(--s18) var(--s10)}
-  .final .display{color:var(--off-white)}
-  .final p{margin:var(--s8) auto 0;max-width:32rem;color:var(--stone);font-size:16px;line-height:24px}
-  .cta-form{display:grid;grid-template-columns:1fr;gap:12px;width:min(100%,42rem);margin:var(--s11) auto 0}
-  .cta-form input,.cta-form button{min-height:52px}
-  .cta-form input{width:100%;border-radius:var(--r-pill);border:1px solid var(--stone);background:var(--off-white);color:var(--black);padding:0 22px;font-family:var(--sans);font-size:14px;outline:none}
-  .cta-form input:focus{border-color:var(--off-white);box-shadow:0 0 0 3px rgba(242,241,237,.14)}
-  .cta-form .btn-light{display:flex;align-items:center;justify-content:center;background:var(--off-white);color:var(--black);white-space:nowrap}
-  .cta-form .btn-light:hover{background:var(--white)}
-  @media(min-width:760px){
-    .cta-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 142px;gap:10px;align-items:center}
-    .cta-form input{border-color:var(--stone);background:var(--off-white)}
-    .cta-form .btn-light{width:142px;padding-left:0;padding-right:0}
-  }
-  .cta-form button[disabled]{opacity:.72;cursor:not-allowed}
-  .form-status{min-height:20px;margin-top:var(--s5)!important;font-size:14px!important;line-height:20px!important;color:var(--stone)!important}
-  .form-status.ok{color:#cfe6c9!important}
-  .form-status.err{color:#f0b8a8!important}
-  .hp{position:absolute;left:-9999px;opacity:0}
-  .final .fine{margin-top:var(--s7);font-size:12px;color:var(--stone)}
-
-  /* footer */
-  footer{padding:var(--s14) 0 var(--s10)}
-  .foot-grid{display:flex;flex-direction:column;gap:var(--s10)}
-  @media(min-width:760px){.foot-grid{flex-direction:row;align-items:flex-start;justify-content:space-between}}
-  footer .desc{font-size:16px;line-height:24px;color:var(--brown);margin-top:var(--s5);max-width:24rem}
-  footer .meta{font-size:14px;color:var(--brown);margin-top:10px}
-  .foot-links{display:flex;flex-wrap:wrap;gap:10px var(--s7);max-width:30rem}
-  .foot-links a{font-size:14px;color:var(--brown);border-bottom:1px solid transparent}
-  .foot-links a:hover{color:var(--black);border-color:var(--stone)}
-  @media(max-width:560px){.foot-links{flex-direction:column;gap:12px}}
-  .foot-bottom{margin-top:var(--s13);border-top:1px solid var(--stone);padding-top:var(--s8);display:flex;flex-direction:column;gap:10px;justify-content:space-between}
-  @media(min-width:560px){.foot-bottom{flex-direction:row;align-items:center}}
-  .foot-bottom p{font-size:12px;color:var(--brown)}
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
 </head>
 <body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #F7F5F0; -webkit-font-smoothing: antialiased; }
+  ::selection { background: #DCEEE3; }
+  @keyframes dalertPulse { 0% { box-shadow: 0 0 0 0 rgba(31,122,77,0.35); } 70% { box-shadow: 0 0 0 9px rgba(31,122,77,0); } 100% { box-shadow: 0 0 0 0 rgba(31,122,77,0); } }
+  @keyframes dalertRowIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes dalertFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  a[data-navlink] { position: relative; }
+  a[data-navlink]::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 6px; height: 1px; background: #1C1B18; transform: scaleX(0); transform-origin: left; transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+  a[data-navlink]:hover::after { transform: scaleX(1); }
+  a[data-arrow] span[data-ar] { display: inline-block; transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+  a[data-arrow]:hover span[data-ar] { transform: translateX(5px); }
+  @media (max-width: 820px) {
+    [data-navlinks] { display: none !important; }
+    [data-hide-mobile] { display: none !important; }
+  }
+</style>
+<title>Dalert — proof of presence</title>
+</helmet>
 
-<header class="nav" id="nav">
-  <div class="wrap nav-inner">
-    <a href="#top" class="logo"><span class="mark"><img src="/brand/dalert-mark.svg" alt="" width="30" height="30" /></span><span class="name">Dalert</span></a>
-    <nav class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#how">How it works</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-    </nav>
-    <div class="nav-actions">
-      <a href="#start" class="btn btn-primary">Start free</a>
-    </div>
-    <button class="burger" id="burger" aria-label="Menu">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2a2420" stroke-width="1.5"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg>
-    </button>
-  </div>
-  <div class="mobile-menu wrap" id="mobileMenu">
-    <a href="#features">Features</a>
-    <a href="#how">How it works</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#faq">FAQ</a>
-    <a href="#start" class="btn btn-primary">Start free</a>
-  </div>
-</header>
+<div style="font-family:'Instrument Sans',Helvetica,Arial,sans-serif; color:#1C1B18; background:#F7F5F0; overflow-x:hidden; position:relative;">
 
-<!-- HERO -->
-<section class="hero" id="top">
-  <div class="wrap hero-grid">
-    <div class="reveal">
-      <span class="eyebrow">Proof-first attendance</span>
-      <h1 class="display">Attendance you can trust.<br><span class="coral">Hours you can pay.</span></h1>
-      <p class="sub">Dalert turns daily clock-ins into verified, payroll-ready hours for shift-based teams — security, cleaning, retail, construction, logistics, clinics and field crews.</p>
-      <div class="hero-cta">
-        <a href="#start" class="btn btn-primary">Start free</a>
-        <a href="#how" class="btn btn-secondary">See how it works</a>
-      </div>
-      <div class="trust-inline">
-        <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2a2420" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg> Pricing in N$</span>
-        <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2a2420" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg> No card needed</span>
-        <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2a2420" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg> Set up in a day</span>
-      </div>
-    </div>
-    <div class="stack reveal">
-      <div class="card clockcard">
-        <div class="row">
-          <span class="serif-label">Clock in</span>
-          <span class="caption" style="font-family:var(--sans)">06:58 · Gate B</span>
+  <!-- grain -->
+  <div aria-hidden="true" style="position:fixed; inset:0; z-index:60; pointer-events:none; opacity:0.5; mix-blend-mode:multiply; background-image:url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.035'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
+
+  <!-- Web3Forms modal -->
+  <sc-if value="{{ showForm }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; z-index:100; background:rgba(28,27,24,0.5); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px;" onClick="{{ closeForm }}">
+      <div onClick="{{ (e) => e.stopPropagation() }}" style="background:#FFFFFF; border:1px solid #E4E0D5; border-radius:12px; padding:clamp(24px, 4vw, 40px); max-width:480px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 1px 2px rgba(28,27,24,0.05), 0 40px 80px -40px rgba(28,27,24,0.25);">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:28px;">
+          <h3 style="font-family:'Instrument Serif',Georgia,serif; font-size:28px; margin:0; letter-spacing:-0.01em;">Join the pilot</h3>
+          <button onClick="{{ closeForm }}" style="background:none; border:none; font-size:24px; color:#8B867B; cursor:pointer; padding:4px; transition:color .2s ease;" style-hover="color:#1C1B18;">✕</button>
         </div>
-        <div class="frame">
-          <div class="layer" id="layer0" style="opacity:1"><div class="avatar">JK</div></div>
-          <div class="layer" id="layer1" style="opacity:0"><svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z" fill="#e27457"/><circle cx="12" cy="9" r="2.5" fill="#fff"/></svg></div>
-          <div class="layer" id="layer2" style="opacity:0"><div class="vbig">✓</div></div>
+        <form action="https://api.web3forms.com/submit" method="POST" style="display:flex; flex-direction:column; gap:16px;">
+          <input type="hidden" name="access_key" value="8ce7abf3-2ad6-4990-aded-fc9a76424023">
+          <input type="hidden" name="subject" value="Dalert Pilot Signup">
+          <input type="hidden" name="redirect" value="https://dalert.app/?success=true">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:14px; font-weight:600;">Company name</label>
+            <input type="text" name="company" required="required" style="font-family:'Instrument Sans',Helvetica,Arial,sans-serif; font-size:15px; padding:11px 14px; border:1px solid #CFCABD; border-radius:6px; transition:border-color .2s ease;" placeholder="Your security firm">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:14px; font-weight:600;">Contact name</label>
+            <input type="text" name="name" required="required" style="font-family:'Instrument Sans',Helvetica,Arial,sans-serif; font-size:15px; padding:11px 14px; border:1px solid #CFCABD; border-radius:6px; transition:border-color .2s ease;" placeholder="Your name">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:14px; font-weight:600;">Email</label>
+            <input type="email" name="email" required="required" style="font-family:'Instrument Sans',Helvetica,Arial,sans-serif; font-size:15px; padding:11px 14px; border:1px solid #CFCABD; border-radius:6px; transition:border-color .2s ease;" placeholder="you@firm.na">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:14px; font-weight:600;">Phone (WhatsApp)</label>
+            <input type="tel" name="phone" style="font-family:'Instrument Sans',Helvetica,Arial,sans-serif; font-size:15px; padding:11px 14px; border:1px solid #CFCABD; border-radius:6px; transition:border-color .2s ease;" placeholder="+264 ...">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:14px; font-weight:600;">How many guards?</label>
+            <input type="number" name="guards" style="font-family:'Instrument Sans',Helvetica,Arial,sans-serif; font-size:15px; padding:11px 14px; border:1px solid #CFCABD; border-radius:6px; transition:border-color .2s ease;" placeholder="e.g. 12">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:14px; font-weight:600;">Message (optional)</label>
+            <textarea name="message" rows="3" style="font-family:'Instrument Sans',Helvetica,Arial,sans-serif; font-size:15px; padding:11px 14px; border:1px solid #CFCABD; border-radius:6px; transition:border-color .2s ease; resize:vertical;" placeholder="Tell us about your site"></textarea>
+          </div>
+          <button type="submit" style="background:#1C1B18; color:#F7F5F0; font-family:'Instrument Sans',Helvetica,Arial,sans-serif; font-size:15px; font-weight:600; padding:14px 20px; border-radius:6px; border:none; cursor:pointer; transition:background .25s ease; margin-top:12px;" style-hover="background:#1F7A4D;">Send application</button>
+        </form>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#8B867B; text-align:center; margin-top:18px;">responses sent to your email</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ NAV ============ -->
+  <nav data-screen-label="Nav" style="position:fixed; top:0; left:0; right:0; z-index:50; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); background:{{ navBg }}; border-bottom:1px solid {{ navLine }}; transition:background .35s ease, border-color .35s ease;">
+    <div style="max-width:1280px; margin:0 auto; padding:0 clamp(20px, 4vw, 40px); height:72px; display:flex; align-items:center; justify-content:space-between; gap:24px;">
+      <a href="#top" style="display:flex; align-items:baseline; gap:2px; text-decoration:none; color:#1C1B18;">
+        <span style="font-family:'Instrument Serif',Georgia,serif; font-size:24px; letter-spacing:-0.01em;">Dalert</span>
+        <span style="width:6px; height:6px; border-radius:50%; background:#1F7A4D; display:inline-block;"></span>
+      </a>
+      <div data-navlinks="1" style="display:flex; align-items:center; gap:2px;">
+        <a data-navlink="1" href="#work" style="text-decoration:none; color:#3E3B34; font-size:14px; font-weight:500; padding:9px 14px;">How it works</a>
+        <a data-navlink="1" href="#report" style="text-decoration:none; color:#3E3B34; font-size:14px; font-weight:500; padding:9px 14px;">Proof Reports</a>
+        <a data-navlink="1" href="#access" style="text-decoration:none; color:#3E3B34; font-size:14px; font-weight:500; padding:9px 14px;">Early access</a>
+      </div>
+      <button onClick="{{ openForm }}" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px; background:#1C1B18; color:#F7F5F0; font-size:14px; font-weight:500; padding:11px 22px; border-radius:4px; transition:background .25s ease; border:none; cursor:pointer; font-family:'Instrument Sans',Helvetica,Arial,sans-serif;" style-hover="background:#1F7A4D;">Join the pilot</button>
+    </div>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <section id="top" data-screen-label="Hero" style="position:relative; padding:clamp(130px, 17vh, 180px) clamp(20px, 4vw, 40px) 0;">
+    <div style="max-width:1280px; margin:0 auto;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:34px;">
+        {{ pulseDot }}
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; color:#6E6A61;">PROOF OF PRESENCE — WINDHOEK, NAMIBIA</span>
+      </div>
+      <h1 style="font-family:'Instrument Serif',Georgia,serif; font-weight:400; font-size:clamp(52px, 8.4vw, 116px); line-height:1.0; letter-spacing:-0.025em; margin:0 0 0; max-width:12ch; text-wrap:balance;">Every billed hour, <em style="font-style:italic; color:#1F7A4D;">proven.</em></h1>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap:clamp(36px, 5vw, 64px); align-items:end; margin-top:clamp(36px, 5vw, 56px); padding-bottom:clamp(48px, 7vw, 84px);">
+        <div style="max-width:440px;">
+          <p style="font-size:clamp(16px, 1.5vw, 18px); line-height:1.65; color:#57534A; margin:0 0 32px; text-wrap:pretty;">Dalert turns a guard's phone into tamper-resistant proof of presence. A selfie, a GPS point and a timestamp, checked against the site's geofence. It keeps working when there is no signal.</p>
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <a data-arrow="1" href="#cta" style="text-decoration:none; display:inline-flex; align-items:center; gap:10px; background:#1C1B18; color:#F7F5F0; font-size:15px; font-weight:500; padding:15px 26px; border-radius:4px; transition:background .25s ease;" style-hover="background:#1F7A4D;">Run one site free <span data-ar="1">→</span></a>
+            <a data-arrow="1" href="#work" style="text-decoration:none; display:inline-flex; align-items:center; gap:10px; color:#1C1B18; font-size:15px; font-weight:500; padding:15px 22px; border-radius:4px; border:1px solid #CFCABD; transition:border-color .25s ease, background .25s ease;" style-hover="border-color:#1C1B18; background:#EFEDE6;">How it works <span data-ar="1">↓</span></a>
+          </div>
         </div>
-        <div class="row" style="margin-top:var(--s5)">
-          <span class="caption" id="demoLabel" style="font-family:var(--sans);font-size:14px;color:var(--brown)">Photo check</span>
-          <span class="caption" id="demoState" style="font-family:var(--sans);font-size:14px">…</span>
+
+        <!-- clock-in demo -->
+        <div style="justify-self:end; width:100%; max-width:380px; animation:dalertFloat 8s ease-in-out infinite;">
+          <div style="background:#FFFFFF; border:1px solid #E4E0D5; border-radius:14px; box-shadow:0 1px 2px rgba(28,27,24,0.05), 0 24px 48px -24px rgba(28,27,24,0.18); overflow:hidden;">
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid #F0EDE5;">
+              <span style="font-size:13.5px; font-weight:600;">Post 4 — Klein Windhoek</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8B867B;">{{ clock }}</span>
+            </div>
+            <div style="padding:18px;">
+              <div style="height:132px; border-radius:8px; background:repeating-linear-gradient(-45deg, #F1EFE8 0px, #F1EFE8 10px, #EAE7DD 10px, #EAE7DD 20px); display:flex; align-items:center; justify-content:center; margin-bottom:14px; border:1px solid #EAE7DD;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#8B867B;">guard selfie</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px; min-height:148px;">
+                <sc-if value="{{ demoIdle }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8B867B; padding:9px 2px;">starting shift…</div>
+                </sc-if>
+                <sc-for list="{{ demoSteps }}" as="s" hint-placeholder-count="0">
+                  <div style="display:flex; align-items:center; gap:10px; padding:9px 12px; border:1px solid #EDEAE0; border-radius:8px; background:#FBFAF7; animation:dalertRowIn .45s cubic-bezier(.2,.7,.2,1) both;">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#1F7A4D; flex-shrink:0;">OK</span>
+                    <div style="display:flex; flex-direction:column; gap:1px;">
+                      <span style="font-size:13px; font-weight:600;">{{ s.label }}</span>
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#8B867B;">{{ s.detail }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ demoVerified }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-radius:8px; background:#1F7A4D; color:#FFFFFF; animation:dalertRowIn .45s cubic-bezier(.2,.7,.2,1) both;">
+                    <span style="font-weight:600; font-size:13.5px;">Verified</span>
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; opacity:0.85;">clock-in 18:02:11</span>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="darkcard">
-        <div class="row" style="display:flex;justify-content:space-between;align-items:center">
-          <span class="serif-label" style="color:var(--off-white)">This week · Site B</span>
-          <span class="pill-tag" style="color:var(--off-white);border-color:#4a423b">Payroll-ready</span>
+    </div>
+  </section>
+
+  <!-- ============ INTRO / STATEMENT ============ -->
+  <section data-screen-label="Statement" style="border-top:1px solid #E4E0D5; padding:clamp(72px, 10vw, 130px) clamp(20px, 4vw, 40px);">
+    <div style="max-width:1280px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap:clamp(32px, 5vw, 64px);">
+      <div data-reveal="1">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; color:#8B867B;">(01) — WHY THIS EXISTS</span>
+      </div>
+      <div data-reveal="1" style="grid-column:span 2; min-width:min(100%, 560px);">
+        <p style="font-family:'Instrument Serif',Georgia,serif; font-size:clamp(26px, 3.2vw, 40px); line-height:1.28; letter-spacing:-0.01em; margin:0 0 40px; text-wrap:pretty;">Security firms bill for guard hours they cannot prove. Registers get filled in after the fact. A WhatsApp photo carries no time or place a client will trust. <em style="font-style:italic; color:#1F7A4D;">Dalert makes every hour defensible.</em></p>
+        <div style="display:flex; flex-direction:column;">
+          <div style="display:grid; grid-template-columns:44px 1fr; gap:16px; padding:18px 0; border-top:1px solid #E4E0D5; align-items:baseline;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8B867B;">a.</span>
+            <span style="font-size:16px; line-height:1.5; color:#3E3B34;">Registers are filled in after the fact, so a signed book proves nothing.</span>
+          </div>
+          <div style="display:grid; grid-template-columns:44px 1fr; gap:16px; padding:18px 0; border-top:1px solid #E4E0D5; align-items:baseline;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8B867B;">b.</span>
+            <span style="font-size:16px; line-height:1.5; color:#3E3B34;">Photos carry no trusted time or location, so clients dispute them.</span>
+          </div>
+          <div style="display:grid; grid-template-columns:44px 1fr; gap:16px; padding:18px 0; border-top:1px solid #E4E0D5; border-bottom:1px solid #E4E0D5; align-items:baseline;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8B867B;">c.</span>
+            <span style="font-size:16px; line-height:1.5; color:#3E3B34;">Ghost guards and buddy punching thrive at remote posts nobody audits.</span>
+          </div>
         </div>
-        <div class="line"><span>Josef K.</span><span>8.0h&nbsp;&nbsp;<span style="color:#9fbfa4">OK</span></span></div>
-        <div class="line"><span>Maria N.</span><span>7.5h&nbsp;&nbsp;<span style="color:#9fbfa4">OK</span></span></div>
-        <div class="line"><span>Petrus A.</span><span>+1.1h&nbsp;&nbsp;<span style="color:#e0a566">OT</span></span></div>
-        <div class="line l-muted" style="border-top:1px solid #4a423b;margin-top:var(--s5);padding-top:var(--s5)"><span>Total payable</span><span style="color:var(--off-white)">23.6h</span></div>
+        <p style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.7; color:#8B867B; margin:28px 0 0; max-width:52ch;">Guard minimum wage rises to N$16.00 an hour in 2026. Every disputed hour is money on a schedule, and clients audit harder.</p>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- TRUST STRIP -->
-<section class="trust-strip">
-  <div class="wrap">
-    <p class="cap">Built for shift-based teams across Namibia</p>
-    <div class="trust-logos">
-      <span>Security</span><span>Cleaning</span><span>Construction</span><span>Retail</span><span>Logistics</span><span>Clinics</span>
-    </div>
-  </div>
-</section>
-
-<!-- PROBLEM -->
-<section class="block">
-  <div class="wrap">
-    <div class="lead reveal">
-      <span class="eyebrow">Sound familiar?</span>
-      <h2 class="h2">Attendance lives on WhatsApp, paper, and Excel — and none of them agree.</h2>
-    </div>
-    <div class="pain-grid">
-      <div class="pain reveal"><h3 class="h3">“Did they actually show up?”</h3><p>Workers message “I’m here” — but there’s no proof of where or when.</p></div>
-      <div class="pain reveal"><h3 class="h3">Buddy-punching &amp; time theft</h3><p>One person clocks in for a friend who never arrived. You pay for hours nobody worked.</p></div>
-      <div class="pain reveal"><h3 class="h3">Hours scribbled on paper</h3><p>Notes get lost, numbers get copied wrong, and payday turns into an argument.</p></div>
-      <div class="pain reveal"><h3 class="h3">Payroll takes all day</h3><p>Chasing messages and fixing Excel before anyone can get paid.</p></div>
-    </div>
-    <p class="bridge reveal">Dalert turns “I think they were there” into <span class="coral">proof you can pay on.</span></p>
-  </div>
-</section>
-
-<!-- HOW -->
-<section class="block" id="how" style="padding-top:0">
-  <div class="wrap">
-    <div class="how reveal">
-      <span class="eyebrow">How it works</span>
-      <h2 class="h2">From clock-in to payroll, without the chase.</h2>
-      <div class="steps">
-        <div class="step"><div class="n">01</div><h3 class="h3">Staff clock in</h3><p>A tap takes a photo and drops a GPS pin at the job site. Real proof of who, where, and when.</p></div>
-        <div class="step"><div class="n">02</div><h3 class="h3">You see it live</h3><p>Who’s on shift, who’s late, who missed work — in real time, across every site.</p></div>
-        <div class="step"><div class="n">03</div><h3 class="h3">Export clean hours</h3><p>Approve shifts, fix missed clock-outs, send regular + overtime totals to payroll.</p></div>
+  <!-- ============ HOW IT WORKS ============ -->
+  <section id="work" data-screen-label="How it works" style="background:#FFFFFF; border-top:1px solid #E4E0D5; padding:clamp(72px, 10vw, 130px) clamp(20px, 4vw, 40px);">
+    <div style="max-width:1280px; margin:0 auto;">
+      <div data-reveal="1" style="display:flex; justify-content:space-between; align-items:baseline; gap:24px; flex-wrap:wrap; margin-bottom:clamp(40px, 6vw, 72px);">
+        <h2 style="font-family:'Instrument Serif',Georgia,serif; font-weight:400; font-size:clamp(36px, 4.6vw, 58px); line-height:1.04; letter-spacing:-0.02em; margin:0; max-width:16ch; text-wrap:balance;">Clock in. Review. Prove.</h2>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; color:#8B867B;">(02) — HOW IT WORKS</span>
       </div>
-      <p class="foot">Your team can be clocking in this afternoon.</p>
-    </div>
-  </div>
-</section>
 
-<!-- FEATURES -->
-<section class="block" id="features" style="padding-top:0">
-  <div class="wrap">
-    <div class="lead reveal">
-      <span class="eyebrow">What you get</span>
-      <h2 class="h2">Everything you need to trust the hours before you pay them.</h2>
-    </div>
-    <div class="feat-grid reveal">
-      <div class="feat"><span class="idx">01</span><div><h3>Verified clock-in</h3><p>Photo + GPS at the job site, so every clock-in is real. Stop buddy-punching for good.</p></div></div>
-      <div class="feat"><span class="idx">02</span><div><h3>Payroll-ready timesheets</h3><p>Regular, overtime and approved corrections totalled into a clean CSV.</p></div></div>
-      <div class="feat"><span class="idx">03</span><div><h3>Geofencing</h3><p>Workers can only clock in inside the site boundary you set.</p></div></div>
-      <div class="feat"><span class="idx">04</span><div><h3>Shift scheduling</h3><p>Assign workers to sites and shifts, and see plan vs. reality.</p></div></div>
-      <div class="feat"><span class="idx">05</span><div><h3>Live dashboard</h3><p>Who’s on shift, who’s late, who’s absent — right now.</p></div></div>
-      <div class="feat"><span class="idx">06</span><div><h3>Overtime &amp; breaks</h3><p>Rules applied automatically, flagged for review before payday.</p></div></div>
-      <div class="feat"><span class="idx">07</span><div><h3>Offline clock-in</h3><p>Low signal? Clock-ins sync as soon as the phone reconnects.</p></div></div>
-      <div class="feat"><span class="idx">08</span><div><h3>Multi-site management</h3><p>Every branch and crew in one account, one view.</p></div></div>
-    </div>
-  </div>
-</section>
+      <div data-reveal="1" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 300px), 1fr)); border-top:1px solid #E4E0D5;">
+        <div style="padding:36px 32px 44px 0; border-bottom:1px solid #E4E0D5;">
+          <div style="font-family:'Instrument Serif',Georgia,serif; font-size:52px; color:#CFCABD; line-height:1; margin-bottom:22px;">1</div>
+          <h3 style="font-size:19px; font-weight:600; letter-spacing:-0.01em; margin:0 0 12px;">The guard taps once</h3>
+          <p style="font-size:15.5px; line-height:1.6; color:#57534A; margin:0 0 18px; text-wrap:pretty;">The app captures a selfie, a GPS point with its accuracy, and a timestamp the device cannot fake, then checks the point against the site's geofence.</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#1F7A4D;">verified or flagged, instantly</span>
+        </div>
+        <div style="padding:36px 32px 44px; border-bottom:1px solid #E4E0D5; border-left:1px solid #E4E0D5;">
+          <div style="font-family:'Instrument Serif',Georgia,serif; font-size:52px; color:#CFCABD; line-height:1; margin-bottom:22px;">2</div>
+          <h3 style="font-size:19px; font-weight:600; letter-spacing:-0.01em; margin:0 0 12px;">It saves before it sends</h3>
+          <p style="font-size:15.5px; line-height:1.6; color:#57534A; margin:0 0 18px; text-wrap:pretty;">Remote posts have bad signal, so every event saves to the phone first with its original capture time, then syncs untouched when the network returns.</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#1F7A4D;">nothing editable after the fact</span>
+        </div>
+        <div style="padding:36px 0 44px 32px; border-bottom:1px solid #E4E0D5; border-left:1px solid #E4E0D5;">
+          <div style="font-family:'Instrument Serif',Georgia,serif; font-size:52px; color:#CFCABD; line-height:1; margin-bottom:22px;">3</div>
+          <h3 style="font-size:19px; font-weight:600; letter-spacing:-0.01em; margin:0 0 12px;">A supervisor signs off</h3>
+          <p style="font-size:15.5px; line-height:1.6; color:#57534A; margin:0 0 18px; text-wrap:pretty;">The dashboard shows each event with its photo and map pin. Clean shifts are approved in bulk; flags are cleared with a note that stays on the record.</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#1F7A4D;">about four minutes a day</span>
+        </div>
+      </div>
 
-<!-- PROOF -->
-<section class="block proof">
-  <div class="wrap">
-    <div class="lead reveal">
-      <span class="eyebrow">Why teams switch</span>
-      <h2 class="h2">Less chasing. Fewer disputes. Cleaner payroll.</h2>
-    </div>
-    <div class="tgrid">
-      <figure class="quote reveal"><blockquote>“We cut payroll prep from a full day to about an hour.”</blockquote><figcaption><span class="role">Operations Manager</span><br><span class="org">Security company · 30 guards</span></figcaption></figure>
-      <figure class="quote reveal"><blockquote>“The photo and GPS settle who showed up before any argument starts.”</blockquote><figcaption><span class="role">Owner</span><br><span class="org">Cleaning services · 18 staff</span></figcaption></figure>
-      <figure class="quote reveal"><blockquote>“Setup took an afternoon. Supervisors use it because it’s just a tap.”</blockquote><figcaption><span class="role">Site Supervisor</span><br><span class="org">Construction · 45 workers</span></figcaption></figure>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="block" id="pricing">
-  <div class="wrap">
-    <div class="lead reveal" style="text-align:center;margin:0 auto">
-      <span class="eyebrow">Pricing</span>
-      <h2 class="h2">Start free. Pay when your team grows.</h2>
-      <p class="ui-small" style="color:var(--brown);margin-top:12px">Prices in Namibian dollars. No card needed to start.</p>
-      <div class="toggle" id="toggle">
-        <button data-annual="false">Monthly</button>
-        <button class="active" data-annual="true">Annual · save ~2 months</button>
+      <!-- detail tabs -->
+      <div data-reveal="1" style="margin-top:clamp(48px, 6vw, 72px);">
+        <div style="display:flex; gap:0; flex-wrap:wrap; border-bottom:1px solid #E4E0D5;">
+          <sc-for list="{{ tabButtons }}" as="t" hint-placeholder-count="5">
+            <button onClick="{{ t.onClick }}" style="font-family:'Instrument Sans',sans-serif; font-size:14px; font-weight:500; padding:14px 20px; cursor:pointer; background:transparent; color:{{ t.color }}; border:none; border-bottom:2px solid {{ t.line }}; margin-bottom:-1px; transition:color .25s ease, border-color .25s ease;">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap:clamp(32px, 5vw, 72px); padding-top:clamp(28px, 4vw, 44px); align-items:start; min-height:280px;">
+          <div>
+            <h3 style="font-family:'Instrument Serif',Georgia,serif; font-weight:400; font-size:clamp(26px, 2.8vw, 34px); line-height:1.12; letter-spacing:-0.015em; margin:0 0 16px;">{{ tab.title }}</h3>
+            <p style="font-size:16px; line-height:1.65; color:#57534A; margin:0 0 22px; max-width:52ch; text-wrap:pretty;">{{ tab.desc }}</p>
+            <div style="display:flex; flex-direction:column;">
+              <sc-for list="{{ tab.bullets }}" as="b" hint-placeholder-count="3">
+                <div style="display:flex; align-items:baseline; gap:12px; padding:10px 0; border-top:1px solid #EDEAE0;">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#1F7A4D; flex-shrink:0;">—</span>
+                  <span style="font-size:15px; color:#3E3B34;">{{ b }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#F7F5F0; border:1px solid #EDEAE0; border-radius:10px; padding:clamp(18px, 2.5vw, 26px); display:flex; flex-direction:column;">
+            <sc-for list="{{ tab.chips }}" as="c" hint-placeholder-count="4">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:13px 4px; border-bottom:1px solid #E9E5DA;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.08em; color:#8B867B; text-transform:uppercase;">{{ c.k }}</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:{{ c.color }}; text-align:right;">{{ c.v }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="plans">
-      <div class="plan reveal">
-        <div class="pname">Starter</div><div class="ptag">For small crews getting started</div>
-        <div class="price"><span class="amt" data-m="0">Free</span><span class="unit"></span></div>
-        <ul>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Up to 5 workers</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Verified clock-in / out</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Basic weekly timesheet</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>1 site</li>
-        </ul>
-        <a href="#start" class="btn btn-secondary cta">Start free</a>
+  </section>
+
+  <!-- ============ PROOF REPORT ============ -->
+  <section id="report" data-screen-label="Proof Report" style="border-top:1px solid #E4E0D5; padding:clamp(72px, 10vw, 130px) clamp(20px, 4vw, 40px);">
+    <div style="max-width:1280px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap:clamp(48px, 6vw, 88px); align-items:center;">
+      <div data-reveal="1">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; color:#8B867B; display:block; margin-bottom:26px;">(03) — THE PROOF REPORT</span>
+        <h2 style="font-family:'Instrument Serif',Georgia,serif; font-weight:400; font-size:clamp(36px, 4.6vw, 58px); line-height:1.04; letter-spacing:-0.02em; margin:0 0 24px; text-wrap:balance;">The PDF you hand your client at month end.</h2>
+        <p style="font-size:16.5px; line-height:1.65; color:#57534A; margin:0 0 30px; max-width:48ch; text-wrap:pretty;">Every shift, every verified event, every cleared flag, packaged into one client-facing report that defends the invoice line by line. This is the document the global time trackers never make.</p>
+        <a data-arrow="1" href="#cta" style="text-decoration:none; display:inline-flex; align-items:center; gap:10px; color:#1C1B18; font-size:15px; font-weight:500; padding:14px 24px; border-radius:4px; border:1px solid #CFCABD; transition:border-color .25s ease, background .25s ease;" style-hover="border-color:#1C1B18; background:#EFEDE6;">See a sample report <span data-ar="1">→</span></a>
       </div>
-      <div class="plan hi reveal">
-        <div class="pname">Team</div><div class="ptag">For growing shift-based teams</div>
-        <div class="price"><span class="amt" data-m="299">N$2,990</span><span class="unit" data-unit>/year</span></div>
-        <ul>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Unlimited workers</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>GPS + geofencing</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Shift scheduling</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Supervisor approvals</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Payroll CSV export</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Overtime rules</li>
-        </ul>
-        <a href="#start" class="btn btn-light cta" style="background:var(--off-white);color:var(--black)">Choose Team</a>
-      </div>
-      <div class="plan reveal">
-        <div class="pname">Business</div><div class="ptag">For multi-site operations</div>
-        <div class="price"><span class="amt" data-m="899">N$8,990</span><span class="unit" data-unit>/year</span></div>
-        <ul>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Everything in Team</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Multi-site dashboards</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Manager roles</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Advanced reports</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e27457" stroke-width="2.5"><path d="M5 12l5 5L20 6"/></svg>Priority support</li>
-        </ul>
-        <a href="#start" class="btn btn-secondary cta">Talk to us</a>
+      <div data-reveal="1" style="justify-self:center; width:100%; max-width:460px;">
+        <div style="background:#FFFFFF; border:1px solid #E4E0D5; border-radius:12px; padding:clamp(26px, 3vw, 38px); box-shadow:0 1px 2px rgba(28,27,24,0.05), 0 28px 56px -28px rgba(28,27,24,0.2); transition:transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease;" style-hover="transform:translateY(-5px); box-shadow:0 1px 2px rgba(28,27,24,0.05), 0 38px 64px -28px rgba(28,27,24,0.26);">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; border-bottom:1px solid #1C1B18; padding-bottom:18px; margin-bottom:20px;">
+            <div>
+              <div style="font-family:'Instrument Serif',Georgia,serif; font-size:22px; letter-spacing:-0.01em;">Proof Report</div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#8B867B; margin-top:4px;">JUNE 2026 — MERIDIAN RETAIL PARK</div>
+            </div>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#8B867B;">p. 1/9</span>
+          </div>
+          <div style="display:flex; flex-direction:column; margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid #F0EDE5; font-family:'IBM Plex Mono',monospace; font-size:12px;"><span style="color:#57534A;">Mon 01 · 18:00–06:00 · Post 1</span><span style="color:#1F7A4D;">verified</span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid #F0EDE5; font-family:'IBM Plex Mono',monospace; font-size:12px;"><span style="color:#57534A;">Mon 01 · 18:00–06:00 · Post 2</span><span style="color:#1F7A4D;">verified</span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid #F0EDE5; font-family:'IBM Plex Mono',monospace; font-size:12px;"><span style="color:#57534A;">Tue 02 · 18:00–06:00 · Post 1</span><span style="color:#1F7A4D;">verified</span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid #F0EDE5; font-family:'IBM Plex Mono',monospace; font-size:12px;"><span style="color:#57534A;">Tue 02 · 18:00–06:00 · Post 2</span><span style="color:#B77E1F;">cleared ①</span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 0; font-family:'IBM Plex Mono',monospace; font-size:12px;"><span style="color:#57534A;">Wed 03 · 18:00–06:00 · Post 1</span><span style="color:#1F7A4D;">verified</span></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; border-top:1px solid #1C1B18; padding-top:16px;">
+            <span style="font-size:14px; font-weight:600;">Hours verified</span>
+            <span style="font-family:'Instrument Serif',Georgia,serif; font-size:26px; color:#1F7A4D;">372 <span style="font-size:16px; color:#8B867B;">/ 372</span></span>
+          </div>
+        </div>
       </div>
     </div>
-    <p class="price-note reveal">Need per-worker pricing for a large workforce? <a href="#start">Talk to us.</a> · Cancel anytime.</p>
-  </div>
-</section>
+  </section>
 
-<!-- FAQ -->
-<section class="block" id="faq" style="background:var(--white);border-top:1px solid var(--stone)">
-  <div class="wrap">
-    <div class="faq">
-      <div class="lead reveal" style="text-align:center;margin:0 auto">
-        <span class="eyebrow">Questions &amp; answers</span>
-        <h2 class="h2">Everything you might be wondering.</h2>
+  <!-- ============ EARLY ACCESS ============ -->
+  <section id="access" data-screen-label="Early access" style="background:#FFFFFF; border-top:1px solid #E4E0D5; padding:clamp(72px, 10vw, 130px) clamp(20px, 4vw, 40px);">
+    <div style="max-width:1280px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap:clamp(32px, 5vw, 64px);">
+      <div data-reveal="1">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; color:#8B867B;">(04) — STATUS</span>
+        <div style="display:inline-flex; align-items:center; gap:9px; border:1px solid #E4E0D5; border-radius:99px; padding:8px 16px; margin-top:22px;">
+          {{ pulseDot }}
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.1em; color:#1F7A4D;">IN DEVELOPMENT</span>
+        </div>
       </div>
-      <div class="faq-list" id="faqList">
-        <div class="faq-item open"><button class="faq-q">Do employees need their own phones?<span class="pl">+</span></button><div class="faq-a"><p>Workers clock in from any smartphone. Supervisors can also clock in a whole crew from one device at the site, so not everyone needs their own phone.</p></div></div>
-        <div class="faq-item"><button class="faq-q">Does it work offline?<span class="pl">+</span></button><div class="faq-a"><p>Yes. Clock-ins are saved on the phone and sync automatically as soon as there’s a connection, so a weak signal never loses a record.</p></div></div>
-        <div class="faq-item"><button class="faq-q">How does the verification work?<span class="pl">+</span></button><div class="faq-a"><p>When a worker clocks in, Dalert captures a photo and the GPS location and checks it against the site you set. You get proof of who clocked in and where.</p></div></div>
-        <div class="faq-item"><button class="faq-q">How fast can we set up?<span class="pl">+</span></button><div class="faq-a"><p>Most teams are live in a day. Add your sites, add your workers, and they can clock in the same afternoon.</p></div></div>
-        <div class="faq-item"><button class="faq-q">Is our data secure?<span class="pl">+</span></button><div class="faq-a"><p>Your data is encrypted and only your account can see it. We never sell data, and you can export or delete it whenever you want.</p></div></div>
-        <div class="faq-item"><button class="faq-q">Does it export to our payroll?<span class="pl">+</span></button><div class="faq-a"><p>Dalert produces a clean CSV with regular and overtime hours that you can import into your payroll or hand to your accountant.</p></div></div>
-        <div class="faq-item"><button class="faq-q">Can I cancel anytime?<span class="pl">+</span></button><div class="faq-a"><p>Yes. There’s no lock-in contract — upgrade, downgrade, or cancel whenever you need to.</p></div></div>
+      <div data-reveal="1" style="grid-column:span 2; min-width:min(100%, 560px);">
+        <h2 style="font-family:'Instrument Serif',Georgia,serif; font-weight:400; font-size:clamp(34px, 4.2vw, 52px); line-height:1.06; letter-spacing:-0.02em; margin:0 0 22px; max-width:22ch; text-wrap:balance;">Version one is being built with real firms, on real posts.</h2>
+        <p style="font-size:16.5px; line-height:1.65; color:#57534A; margin:0 0 12px; max-width:56ch; text-wrap:pretty;">The first release covers the full loop, from clock-in to approved shift to Proof Report, proven end to end on Namibian sites before it ships.</p>
+        <p style="font-size:16.5px; line-height:1.65; color:#57534A; margin:0 0 32px; max-width:56ch; text-wrap:pretty;">Pricing will be simple: per active guard, per month, in Namibian dollars. It is being finalised with our pilot firms now.</p>
+        <a data-arrow="1" href="#cta" style="text-decoration:none; display:inline-flex; align-items:center; gap:10px; background:#1C1B18; color:#F7F5F0; font-size:15px; font-weight:500; padding:15px 26px; border-radius:4px; transition:background .25s ease;" style-hover="background:#1F7A4D;">Become a pilot firm <span data-ar="1">→</span></a>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#A39D8F; margin-top:16px;">limited places, first come first served</div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FINAL CTA -->
-<section class="block final" id="start">
-  <div class="wrap">
-    <div class="card-cta reveal">
-      <h2 class="display">Know who worked.<br>Pay them right.</h2>
-      <p>Set up your team in an afternoon. Your first 5 workers are free, forever.</p>
-      <form class="cta-form" id="startForm">
-        <input type="hidden" name="access_key" value="d5431d48-49ce-45ca-b498-135dba8e0ebd" />
-        <input type="hidden" name="subject" value="New Dalert start free request" />
-        <input type="hidden" name="from_name" value="Dalert Website" />
-        <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" />
-        <input type="text" name="name" required placeholder="Your name" aria-label="Your name" />
-        <input type="email" name="email" required placeholder="you@company.com" aria-label="Work email" />
-        <button type="submit" class="btn btn-light">Start free</button>
-      </form>
-      <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
-      <p class="fine">No card needed · Set up in a day · Cancel anytime</p>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <a href="#top" class="logo"><span class="mark"><img src="/brand/dalert-mark.svg" alt="" width="30" height="30" /></span><span class="name">Dalert</span></a>
-        <p class="desc">Proof-first attendance and payroll-ready timesheets for shift-based teams.</p>
-        <p class="meta">dalert.app · Namibia · Prices in N$</p>
+  <!-- ============ CTA ============ -->
+  <section id="cta" data-screen-label="CTA" style="background:#161D18; padding:clamp(88px, 12vw, 150px) clamp(20px, 4vw, 40px);">
+    <div data-reveal="1" style="max-width:1280px; margin:0 auto;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; color:#6FA98A; display:block; margin-bottom:30px;">(05) — THE OFFER</span>
+      <h2 style="font-family:'Instrument Serif',Georgia,serif; font-weight:400; font-size:clamp(44px, 6.4vw, 88px); line-height:1.0; letter-spacing:-0.025em; color:#F2F0E9; margin:0 0 28px; max-width:16ch; text-wrap:balance;">Run one real post, <em style="font-style:italic; color:#8FCBAA;">free.</em></h2>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap:clamp(32px, 5vw, 64px); align-items:end;">
+        <p style="font-size:17px; line-height:1.65; color:#9FAFA3; margin:0; max-width:50ch; text-wrap:pretty;">Bring one site and one shift. We set it up with you the same week. If the Proof Report does not survive your client's next audit, you do not pay.</p>
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-self:start;">
+          <a data-arrow="1" href="#top" style="text-decoration:none; display:inline-flex; align-items:center; gap:10px; background:#F2F0E9; color:#161D18; font-size:15px; font-weight:500; padding:16px 28px; border-radius:4px; transition:background .25s ease;" style-hover="background:#8FCBAA;">Get started free <span data-ar="1">→</span></a>
+          <a href="#top" style="text-decoration:none; color:#F2F0E9; font-size:15px; font-weight:500; padding:16px 24px; border-radius:4px; border:1px solid #33463A; transition:border-color .25s ease, background .25s ease;" style-hover="border-color:#6FA98A; background:#1B2721;">Talk to the founder</a>
+        </div>
       </div>
-      <nav class="foot-links" aria-label="Footer navigation">
-        <a href="#features">Features</a>
-        <a href="#how">How it works</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#faq">FAQ</a>
-        <a href="#start">Start free</a>
-      </nav>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#5E6F63; margin-top:34px;">based in Windhoek, answers the phone</div>
     </div>
-    <div class="foot-bottom">
-      <p>© <span id="year"></span> Dalert. Attendance you can trust. Hours you can pay.</p>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer data-screen-label="Footer" style="background:#10150F; padding:clamp(48px, 7vw, 80px) clamp(20px, 4vw, 40px) 0; overflow:hidden;">
+    <div style="max-width:1280px; margin:0 auto;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap:44px; padding-bottom:52px; border-bottom:1px solid #212B20;">
+        <div>
+          <div style="display:flex; align-items:baseline; gap:2px; margin-bottom:14px;">
+            <span style="font-family:'Instrument Serif',Georgia,serif; font-size:22px; color:#F2F0E9;">Dalert</span>
+            <span style="width:5px; height:5px; border-radius:50%; background:#1F7A4D; display:inline-block;"></span>
+          </div>
+          <p style="font-size:13.5px; line-height:1.6; color:#77857A; margin:0; max-width:260px;">Proof of presence for Namibian shift businesses, built for private security firms first.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:11px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; color:#54614F;">PRODUCT</span>
+          <a href="#work" style="text-decoration:none; color:#A6B2A9; font-size:14px; transition:color .2s ease;" style-hover="color:#F2F0E9;">How it works</a>
+          <a href="#report" style="text-decoration:none; color:#A6B2A9; font-size:14px; transition:color .2s ease;" style-hover="color:#F2F0E9;">Proof Reports</a>
+          <a href="#work" style="text-decoration:none; color:#A6B2A9; font-size:14px; transition:color .2s ease;" style-hover="color:#F2F0E9;">Offline mode</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:11px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; color:#54614F;">COMPANY</span>
+          <a href="#access" style="text-decoration:none; color:#A6B2A9; font-size:14px; transition:color .2s ease;" style-hover="color:#F2F0E9;">Early access</a>
+          <a href="#cta" style="text-decoration:none; color:#A6B2A9; font-size:14px; transition:color .2s ease;" style-hover="color:#F2F0E9;">Contact</a>
+          <a href="#cta" style="text-decoration:none; color:#A6B2A9; font-size:14px; transition:color .2s ease;" style-hover="color:#F2F0E9;">WhatsApp us</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:11px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; color:#54614F;">LEGAL</span>
+          <a href="#top" style="text-decoration:none; color:#A6B2A9; font-size:14px; transition:color .2s ease;" style-hover="color:#F2F0E9;">Privacy</a>
+          <a href="#top" style="text-decoration:none; color:#A6B2A9; font-size:14px; transition:color .2s ease;" style-hover="color:#F2F0E9;">Terms</a>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding:26px 0 8px;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#54614F;">© 2026 Dalert — Windhoek, Namibia</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#54614F;">every hour, proven</span>
+      </div>
+      <div aria-hidden="true" style="font-family:'Instrument Serif',Georgia,serif; font-size:clamp(100px, 19vw, 280px); line-height:0.75; letter-spacing:-0.03em; color:#151C13; text-align:center; user-select:none; margin-top:14px; transform:translateY(14%);">Dalert</div>
     </div>
-  </div>
-</footer>
+  </footer>
 
-<script>
-  document.getElementById('year').textContent = new Date().getFullYear();
-  var nav=document.getElementById('nav');
-  window.addEventListener('scroll',function(){ if(window.scrollY>40)nav.classList.add('scrolled');else nav.classList.remove('scrolled'); });
-  var burger=document.getElementById('burger'),mm=document.getElementById('mobileMenu');
-  burger.addEventListener('click',function(){mm.classList.toggle('open');});
-  mm.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mm.classList.remove('open');});});
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;autoplayDemo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero demo&quot;},&quot;demoSpeedMs&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1300,&quot;min&quot;:700,&quot;max&quot;:2600,&quot;step&quot;:100,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Hero demo&quot;}}">
+class Component extends DCLogic {
+  state = { step: 0, tab: 0, scrolled: false, clock: '', showForm: false };
 
-  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduce){ document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('in');}); }
-  else{
-    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
-    document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+  tabs = [
+    {
+      label: 'Clock-in', title: 'One tap. Three proofs.',
+      desc: "A guard opens the app and taps once. Dalert captures a selfie, a GPS point with its accuracy, and a trusted timestamp. Then it checks the point against the site's geofence and marks the event verified or flagged.",
+      bullets: ['Selfie with basic liveness check', 'GPS point with accuracy radius', 'Timestamp the device cannot fake'],
+      chips: [
+        { k: 'event', v: 'clock-in 18:02:11', color: '#1C1B18' },
+        { k: 'gps', v: '-22.5972, 17.0932 ±8m', color: '#1C1B18' },
+        { k: 'geofence', v: 'inside, Post 4', color: '#1F7A4D' },
+        { k: 'status', v: 'VERIFIED', color: '#1F7A4D' },
+      ],
+    },
+    {
+      label: 'Offline mode', title: 'Built for posts with no bars.',
+      desc: 'Every event saves to the phone first with its original capture time, then syncs untouched when signal returns. Nothing is editable after the fact. That is what makes it proof.',
+      bullets: ['Saves locally, syncs automatically', 'Original timestamps preserved', 'Works on cheap Android phones'],
+      chips: [
+        { k: 'saved', v: 'on device 18:02', color: '#1C1B18' },
+        { k: 'queue', v: '3 events waiting', color: '#B77E1F' },
+        { k: 'synced', v: '21:47 untouched', color: '#1C1B18' },
+        { k: 'status', v: 'VERIFIED', color: '#1F7A4D' },
+      ],
+    },
+    {
+      label: 'Dashboard', title: 'Review a day in minutes.',
+      desc: 'Supervisors see every event with its photo and map pin, approve clean shifts in bulk, and clear flags with a note. What the client eventually sees is always a human-reviewed record.',
+      bullets: ['Photo and map pin per event', 'Bulk approve clean shifts', 'Flags cleared with an audit note'],
+      chips: [
+        { k: 'today', v: '41 events, 38 clean', color: '#1C1B18' },
+        { k: 'flags', v: '3 to review', color: '#B77E1F' },
+        { k: 'action', v: 'approve all clean', color: '#1C1B18' },
+        { k: 'time', v: 'about 4 min a day', color: '#1F7A4D' },
+      ],
+    },
+    {
+      label: 'Proof Report', title: 'The invoice\u2019s bodyguard.',
+      desc: 'At month end, Dalert prints a client-facing PDF: every shift, every verified event, every cleared flag. Plus timesheets and CSV export for your own books.',
+      bullets: ['Client-facing PDF per site', 'Timesheets and CSV export', 'Flag history with resolutions'],
+      chips: [
+        { k: 'period', v: 'June 2026', color: '#1C1B18' },
+        { k: 'site', v: 'Meridian Retail Park', color: '#1C1B18' },
+        { k: 'hours', v: '372 / 372 verified', color: '#1F7A4D' },
+        { k: 'format', v: 'PDF and CSV', color: '#1C1B18' },
+      ],
+    },
+    {
+      label: 'PIN & QR mode', title: 'A shared tablet covers everyone.',
+      desc: 'Guards without smartphones clock in on a shared device at the post, with a PIN plus selfie or a QR badge scan. Same proof, same report, no one left out of the system.',
+      bullets: ['Shared tablet kiosk mode', 'PIN plus selfie, or QR badge', 'Same geofence checks apply'],
+      chips: [
+        { k: 'device', v: 'shared tablet, Post 1', color: '#1C1B18' },
+        { k: 'auth', v: 'PIN 4 digit + selfie', color: '#1C1B18' },
+        { k: 'alt', v: 'QR badge scan', color: '#1C1B18' },
+        { k: 'status', v: 'VERIFIED', color: '#1F7A4D' },
+      ],
+    },
+  ];
+
+  demoStepDefs = [
+    { label: 'Selfie captured', detail: 'liveness ok' },
+    { label: 'GPS locked', detail: '-22.5972, 17.0932 ±8m' },
+    { label: 'Inside geofence', detail: 'Post 4, Klein Windhoek' },
+  ];
+
+  componentDidMount() {
+    const tick = () => {
+      if (this.props.autoplayDemo !== false) {
+        this.setState((s) => ({ step: (s.step + 1) % 7 }));
+      }
+      this._t = setTimeout(tick, this.props.demoSpeedMs ?? 1300);
+    };
+    this._t = setTimeout(tick, 900);
+
+    const setClock = () => {
+      const d = new Date();
+      const p = (n) => String(n).padStart(2, '0');
+      this.setState({ clock: p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) });
+    };
+    setClock();
+    this._c = setInterval(setClock, 1000);
+
+    this._onScroll = () => {
+      const sc = window.scrollY > 24;
+      if (sc !== this.state.scrolled) this.setState({ scrolled: sc });
+    };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+
+    const els = Array.from(document.querySelectorAll('[data-reveal]'));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    els.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.9) return;
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.transition = 'opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1)';
+      io.observe(el);
+    });
+    this._io = io;
   }
 
-  (function(){
-    var l0=document.getElementById('layer0'),l1=document.getElementById('layer1'),l2=document.getElementById('layer2');
-    var label=document.getElementById('demoLabel'),state=document.getElementById('demoState');
-    var labels=['Photo check','Gate B · Windhoek','Verified on site'];
-    if(reduce){ l0.style.opacity=0;l2.style.opacity=1;label.textContent=labels[2];state.textContent='✓ done';state.style.color='#2a2420';return; }
-    var step=0;
-    setInterval(function(){
-      step=(step+1)%3;
-      [l0,l1,l2].forEach(function(l,i){l.style.opacity=(i===step)?1:0;});
-      label.textContent=labels[step];
-      if(step===2){state.textContent='✓ done';state.style.color='#2a2420';}else{state.textContent='…';state.style.color='var(--brown)';}
-    },1600);
-  })();
+  componentWillUnmount() {
+    clearTimeout(this._t);
+    clearInterval(this._c);
+    window.removeEventListener('scroll', this._onScroll);
+    if (this._io) this._io.disconnect();
+  }
 
-  (function(){
-    var annual=true,toggle=document.getElementById('toggle');
-    function render(){
-      document.querySelectorAll('.plan .amt').forEach(function(el){
-        var m=parseInt(el.getAttribute('data-m'),10);
-        if(m===0){el.textContent='Free';return;}
-        el.textContent='N$'+(annual?m*10:m).toLocaleString('en-US');
-      });
-      document.querySelectorAll('.plan .unit[data-unit]').forEach(function(el){el.textContent=annual?'/year':'/month';});
-      toggle.querySelectorAll('button').forEach(function(b){b.classList.toggle('active',(b.getAttribute('data-annual')==='true')===annual);});
-    }
-    toggle.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){annual=b.getAttribute('data-annual')==='true';render();});});
-    render();
-  })();
+  renderVals() {
+    const { step, tab, scrolled, clock, showForm } = this.state;
 
-  document.querySelectorAll('.faq-q').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var item=btn.parentElement,open=item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(function(it){it.classList.remove('open');});
-      if(!open)item.classList.add('open');
-    });
-  });
-
-  (function(){
-    var form=document.getElementById('startForm');
-    var status=document.getElementById('formStatus');
-    if(!form||!status)return;
-    form.addEventListener('submit',async function(e){
-      e.preventDefault();
-      var button=form.querySelector('button[type="submit"]');
-      var original=button.textContent;
-      status.className='form-status';
-      status.textContent='Sending...';
-      button.textContent='Sending...';
-      button.disabled=true;
-      try{
-        var res=await fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(form)});
-        var data=await res.json();
-        if(!res.ok||!data.success)throw new Error(data.message||'Unable to send.');
-        form.reset();
-        status.className='form-status ok';
-        status.textContent='Sent. We will contact you soon.';
-        button.textContent='Sent';
-      }catch(err){
-        status.className='form-status err';
-        status.textContent='Something went wrong. Please try again.';
-        button.textContent=original;
-      }finally{
-        button.disabled=false;
-      }
-    });
-  })();
+    return {
+      clock,
+      demoIdle: step === 0,
+      demoSteps: this.demoStepDefs.slice(0, Math.min(step, 3)),
+      demoVerified: step >= 4,
+      showForm,
+      openForm: () => this.setState({ showForm: true }),
+      closeForm: () => this.setState({ showForm: false }),
+      pulseDot: React.createElement('span', {
+        style: { width: '8px', height: '8px', borderRadius: '50%', background: '#1F7A4D', display: 'inline-block', animation: 'dalertPulse 1.8s ease-out infinite', flexShrink: 0 },
+      }),
+      navBg: scrolled ? 'rgba(247,245,240,0.88)' : 'rgba(247,245,240,0)',
+      navLine: scrolled ? '#E4E0D5' : 'rgba(228,224,213,0)',
+      tab: this.tabs[tab],
+      tabButtons: this.tabs.map((t, i) => ({
+        label: t.label,
+        onClick: () => this.setState({ tab: i }),
+        color: i === tab ? '#1C1B18' : '#8B867B',
+        line: i === tab ? '#1C1B18' : 'transparent',
+      })),
+    };
+  }
+}
 </script>
 </body>
 </html>

@@ -1,92 +1,45 @@
 # Dalert
 
-Minimal landing page for `dalert.app`, with a Vercel serverless waitlist endpoint backed by Postgres.
+Landing page for [dalert.app](https://dalert.app) — proof-of-presence for Namibian security firms.
 
-## Local Setup
+Static single-page site. No build step, no backend, no database. The "Join the pilot" form
+submits directly to [Web3Forms](https://web3forms.com); responses are emailed straight to the
+configured inbox.
 
-```bash
-npm install
-npm run dev
+## Files
+
+- `index.html` — the page. Edit this directly in any text editor, no build step needed.
+- `support.js` — small runtime that renders `index.html`'s template (loads React from a CDN,
+  do not edit by hand; it's generated tooling output).
+
+## Local preview
+
+Any static file server works, e.g.:
+
+```
+npx serve .
 ```
 
-The visual landing page runs at `http://127.0.0.1:5173` or the port Vite prints. The waitlist API is meant for Vercel, so local Vite preview will show a calm backend-not-available message until the project is deployed or run through Vercel tooling with `DATABASE_URL`.
+Then open the printed local URL.
 
-## Database
+## Deploy
 
-Use Neon Postgres or Vercel Postgres. The app expects:
+Currently deployed on [Vercel](https://vercel.com) as a static site (no framework, no build
+command, output directory `.`), connected to this repository's `main` branch. Pushing to `main`
+triggers a production redeploy of [dalert.app](https://dalert.app) automatically.
 
-```txt
-DATABASE_URL
-IP_HASH_SALT
-```
+To deploy elsewhere:
 
-`/api/waitlist` creates the `waitlist_signups` table automatically on the first successful signup.
+- **Netlify** — publish directory `/`, no build command.
+- **GitHub Pages** — Settings → Pages → deploy from branch `main` → `/root`.
 
-To see signups in the database:
+## Updating the form
 
-```sql
-select email, source, created_at
-from waitlist_signups
-order by created_at desc;
-```
-
-Security included:
-
-- Database credentials stay server-side in Vercel environment variables.
-- Email is validated and normalized.
-- Duplicate emails are ignored safely with a unique constraint.
-- Inserts use parameterized SQL.
-- A hidden honeypot field catches simple bots.
-- IP addresses are hashed before storage.
-- Basic per-IP rate limiting is applied.
-- Security headers are configured in `vercel.json`.
-
-## GitHub
-
-From `C:\Users\THURSTON S\Documents\saas\dalert`:
-
-```bash
-git init
-git add .
-git commit -m "Build Dalert landing page with waitlist"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/dalert.git
-git push -u origin main
-```
-
-Create the empty GitHub repo first, then replace `YOUR_USERNAME`.
-
-## Vercel
-
-1. Import the GitHub repo into Vercel.
-2. Framework preset: Vite.
-3. Build command: `npm run build`.
-4. Output directory: `dist`.
-5. Add environment variables:
-   - `DATABASE_URL`
-   - `IP_HASH_SALT`
-6. Deploy.
+The form posts to Web3Forms using the access key embedded in `index.html`. To change where
+submissions are delivered, update the key in the [Web3Forms dashboard](https://web3forms.com)
+(no code change needed) or swap the `access_key` hidden field for a new key.
 
 ## Domain
 
-Add both domains in Vercel project settings:
-
-```txt
-dalert.app
-www.dalert.app
-```
-
-Then configure DNS at name.com using the exact values Vercel shows. Vercel’s general-purpose values are commonly:
-
-```txt
-A      @      76.76.21.21
-CNAME  www    cname.vercel-dns.com
-```
-
-Use Vercel’s domain inspector as the source of truth if it gives project-specific records. Vercel will provision HTTPS after DNS verifies.
-
-## References
-
-- Vercel custom domains: https://vercel.com/docs/domains/set-up-custom-domain
-- Vercel Functions API: https://vercel.com/docs/functions/functions-api-reference?framework=other
-- Neon + Vercel: https://neon.com/docs/guides/vercel/
+`dalert.app` and `www.dalert.app` are configured in Vercel's project settings, with DNS managed
+at name.com. Use Vercel's domain inspector as the source of truth for DNS records.
